@@ -25,7 +25,7 @@ module.exports = {
                 description: req.body.description
             });
 
-            return res.status(201).json(response(201, "Create Category Successful", Category))
+            return res.status(201).json(response(201, "Create Category Successful", category))
         } catch (error) {
             return res.status(500).json(response(500, "Server Error", error.message))
 
@@ -33,8 +33,23 @@ module.exports = {
     },
     getCategory: async (req, res) => {
         try {
-            const categories = await Category.findAll();
-            return res.status(200).json(response(200, "success, get categories", categories));
+            const page = Number(req.query.page) || 1;
+            const limit = Number(req.query.limit) || 5;
+            const offset = (page - 1) * limit;
+            const {count, rows} = await Category.findAndCountAll({
+                offset: offset,
+                limit: limit
+            });
+
+            const formatPagination = {
+                    data: rows,
+                    limit: limit,
+                    rangeData: (offset+1) + "-" +(offset+rows.length),
+                    currentPage: page,
+                    totalPage: Math.ceil(count / limit),
+                    total: count,
+                }
+            return res.status(200).json(response(200, "success, get categories", formatPagination));
 
         } catch (error) {
 

@@ -31,7 +31,6 @@ module.exports = {
 
         try {
 
-            
             if (req.user.role !== "admin") {
 
                 return res.status(403).json(
@@ -39,17 +38,12 @@ module.exports = {
                 );
 
             }
-
             next();
 
         } catch (error) {
-
             return res.status(500).json(
                 response(500, "Server Error", error.message)
             );
-
         }
-
     }
-
 };
