@@ -25,5 +25,31 @@ module.exports = {
 
         }
 
+    },
+
+     checkAdmin: async (req, res, next) => {
+
+        try {
+
+            
+            if (req.user.role !== "admin") {
+
+                return res.status(403).json(
+                    response(403, "Forbidden", "Admin access only")
+                );
+
+            }
+
+            next();
+
+        } catch (error) {
+
+            return res.status(500).json(
+                response(500, "Server Error", error.message)
+            );
+
+        }
+
     }
-}
+
+};
