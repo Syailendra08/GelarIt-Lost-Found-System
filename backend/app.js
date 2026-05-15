@@ -4,6 +4,7 @@ const port = 3000
 
 const db = require('./models')
 const authRoute = require("./routes/auth.route");
+const categoryRoute = require("./routes/category.route");
 const methodOverride = require('method-override')
 const {checkToken} = require('./middlewares/auth')
 
@@ -15,7 +16,8 @@ db.sequelize.authenticate()
 
 app.use(express.json());
 app.use(methodOverride("_method")); 
-app.use("/auth", authRoute);   
+app.use("/", authRoute); 
+app.use("/categories", checkToken, categoryRoute)  
 
 app.get('/', (req, res) => {
     res.send('hello world!')
