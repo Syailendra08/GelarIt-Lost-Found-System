@@ -1,8 +1,6 @@
 const Validator = require("fastest-validator");
 const v = new Validator();
-
-const { Category } = require("../models");
-
+const { Category, Item } = require("../models");
 const { response } = require("../helpers/response.formatter");
 const { where, Op } = require("sequelize");
 
@@ -50,7 +48,14 @@ module.exports = {
 
             order: sortBy && order ? [
                 [sortBy, order]
-            ] : []
+            ] : [],
+
+             include: [
+                    {
+                        model: Item,
+                        as: "items"
+                    }
+                ]
         });
 
         const formatPagination = {

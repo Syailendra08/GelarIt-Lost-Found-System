@@ -7,6 +7,7 @@ const authRoute = require("./routes/auth.route");
 const categoryRoute = require("./routes/category.route");
 const userRoute = require("./routes/user.route");
 const locationRoute = require("./routes/location.route");
+const itemRoute = require("./routes/item.route");
 const methodOverride = require('method-override')
 const {checkToken} = require('./middlewares/auth')
 const {checkAdmin} = require('./middlewares/auth')
@@ -23,6 +24,7 @@ app.use("/", authRoute);
 app.use("/categories", checkToken, checkAdmin, categoryRoute) ; 
 app.use("/users", checkToken, checkAdmin, userRoute  )
 app.use("/locations", checkToken, locationRoute);
+app.use("/items", checkToken, itemRoute )
 
 app.get('/', (req, res) => {
     res.send('hello world!')

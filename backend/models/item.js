@@ -71,7 +71,11 @@ module.exports = (sequelize, DataTypes) => {
 
     image: {
     type: DataTypes.STRING,
-    allowNull: true
+    allowNull: true,
+    get() {
+      const rawValue = this.getDataValue('image');
+      return rawValue ? `http://localhost:3000/uploads/${rawValue}` : null;
+    }
 },
     color: {
       type: DataTypes.STRING,
