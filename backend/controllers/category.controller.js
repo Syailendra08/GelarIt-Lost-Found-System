@@ -4,7 +4,7 @@ const v = new Validator();
 const { Category } = require("../models");
 
 const { response } = require("../helpers/response.formatter");
-const { where } = require("sequelize");
+const { where, Op } = require("sequelize");
 
 module.exports = {
     createCategory: async (req, res) => {
@@ -32,31 +32,42 @@ module.exports = {
         };
     },
     getCategory: async (req, res) => {
-        try {
-            const page = Number(req.query.page) || 1;
-            const limit = Number(req.query.limit) || 5;
-            const offset = (page - 1) * limit;
-            const {count, rows} = await Category.findAndCountAll({
-                offset: offset,
-                limit: limit
-            });
+    try {
+        const { name, sortBy, order, page, limit } = req.query;
+        const currentPage = Number(page) || 1;
+        const dataLimit = Number(limit) || 5;
+        const offset = (currentPage - 1) * dataLimit;
 
-            const formatPagination = {
-                    data: rows,
-                    limit: limit,
-                    rangeData: (offset+1) + "-" +(offset+rows.length),
-                    currentPage: page,
-                    totalPage: Math.ceil(count / limit),
-                    total: count,
+        const { count, rows } = await Category.findAndCountAll({
+            offset: offset,
+            limit: dataLimit,
+
+            where: name ? {
+                name: {
+                    [Op.like]: `%${name}%`
                 }
-            return res.status(200).json(response(200, "success, get categories", formatPagination));
+            } : {},
 
-        } catch (error) {
+            order: sortBy && order ? [
+                [sortBy, order]
+            ] : []
+        });
 
-            return res.status(500).json(response(500, "Server Error", error.message))
+        const formatPagination = {
+            data: rows,
+            limit: dataLimit,
+            rangeData: (offset + 1) + "-" + (offset + rows.length),
+            currentPage: currentPage,
+            totalPage: Math.ceil(count / dataLimit),
+            total: count,
+        };
 
-        }
-    },
+        return res.status(200).json(response(200, "success, get categories", formatPagination));
+
+    } catch (error) {
+        return res.status(500).json(response(500, "Server Error", error.message));
+    }
+},
 
     showCategory: async (req, res) => {
         try {
@@ -86,11 +97,7 @@ module.exports = {
 
             const validate = v.validate(req.body, schema);
             if (validate.length > 0) {
-                // jika hasil validate ada error
-                return res.status(400).json(response(400, "Validasi Error",
-                    validate));
-
-            }
+                return res.status(400).json(response(400, "Validasi Error",validate));}
 
             const newCategory = await Category.findByPk(id);
 

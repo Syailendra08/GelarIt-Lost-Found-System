@@ -3,6 +3,7 @@ const v = new Validator();
 const passwordHash = require("password-hash");
 const { User, Item } = require("../models");
 const { response } = require("../helpers/response.formatter");
+const { Op } = require("sequelize");
 
 module.exports = {
 
@@ -48,15 +49,37 @@ module.exports = {
 
     getUsers: async (req, res) => {
         try {
-            const page = Number(req.query.page) || 1;
-            const limit = Number(req.query.limit) || 5;
-            const offset = (page - 1) * limit;
+
+
+            const { name, email, sortBy, order, page, limit } = req.query;
+
+            // pagination
+            const currentPage = Number(page) || 1;
+            const dataLimit = Number(limit) || 5;
+            const offset = (currentPage - 1) * dataLimit;
+
             const { count, rows } = await User.findAndCountAll({
-                offset: offset, limit: limit,
+                offset: offset,
+                limit: dataLimit,
+                where: {
+                    ...(name && {
+                        name: {
+                            [Op.like]: `%${name}%`
+                        }
+                    }),
+
+                    ...(email && {
+                        email: {
+                            [Op.like]: `%${email}%`
+                        }
+                    })
+                },
+                order: sortBy && order ? [
+                    [sortBy, order]
+                ] : [],
                 attributes: {
                     exclude: ["password"]
                 },
-
                 include: [
                     {
                         model: Item,
@@ -66,21 +89,20 @@ module.exports = {
                         model: Item,
                         as: "receivedItems"
                     }
-                ],
-
-
-
+                ]
             });
 
             const formatPagination = {
                 data: rows,
-                limit: limit,
+                limit: dataLimit,
                 rangeData: (offset + 1) + "-" + (offset + rows.length),
-                currentPage: page,
-                totalPage: Math.round(count / limit),
+                currentPage: currentPage,
+                totalPage: Math.ceil(count / dataLimit),
                 total: count,
-            }
+            };
+
             return res.status(200).json(response(200, "Success get all users", formatPagination));
+
         } catch (error) {
             return res.status(500).json(response(500, "Server Error", error.message));
         }
@@ -140,7 +162,7 @@ module.exports = {
 
             const validate = v.validate(data, schema);
             if (validate.length > 0) {
-                
+
                 return res.status(400).json(response(400, "Validasi Error",
                     validate));
 
@@ -160,14 +182,14 @@ module.exports = {
                 email: email,
                 role: role
             }, {
-                where: {id: id} 
+                where: { id: id }
             });
 
-             return res.status(200).json(
+            return res.status(200).json(
                 response(200, "Update User Success", newUser)
             );
         } catch (error) {
-             return res.status(500).json(response(500, "Server Error", error.message));
+            return res.status(500).json(response(500, "Server Error", error.message));
 
         }
     },
@@ -176,20 +198,22 @@ module.exports = {
         try {
             const { id } = req.params;
             const user = await User.findByPk(id);
-           
 
-            if(!user) {
+
+            if (!user) {
                 return res.status(400).json(response(400, "User not found "))
             }
 
-             const deleteProcess = await User.destroy({
-                where: {id, id}
+            const deleteProcess = await User.destroy({
+                where: { id, id }
             });
             return res.status(200).json(response(200, "Delete User success",))
-        }catch(error) {
+        } catch (error) {
             return res.status(500).json(response(500, "Server Error", error.message));
         }
-    }
+    },
+
+    
 
 
 }
