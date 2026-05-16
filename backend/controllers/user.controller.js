@@ -213,7 +213,29 @@ module.exports = {
         }
     },
 
-    
+    restoreUser: async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findOne({
+            where: { id },
+            paranoid: false 
+        });
+
+        if (!user) {
+            return res.status(404).json(response(404, "User not found"));
+        }
+
+       const restoreProcess = await User.restore({
+                where: {id, id}
+            });
+
+        return res.status(200).json(response(200, "Success restore user"));
+
+    } catch (error) {
+
+        return res.status(500).json(response(500, "Server Error", error.message));
+    }
+}
 
 
 }

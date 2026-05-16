@@ -15,6 +15,6 @@ router.get("/",  locationController.getLocations);
 router.get("/:id",  locationController.showLocation);
 router.put("/:id", checkAdmin, upload.none(), locationController.updateLocation);
 router.delete("/:id", checkAdmin, locationController.deleteLocation);
-router.patch("/restore/:id", locationController.restoreLocation);
+router.patch("/restore/:id", checkAdmin, locationController.restoreLocation);
 
 module.exports = router;

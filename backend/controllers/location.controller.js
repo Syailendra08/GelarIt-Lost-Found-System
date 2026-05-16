@@ -178,9 +178,7 @@ module.exports = {
 
     restoreLocation: async (req, res) => {
     try {
-
         const { id } = req.params;
-
         const location = await Location.findOne({
             where: { id },
             paranoid: false 
@@ -196,16 +194,11 @@ module.exports = {
                 where: {id, id}
             });
 
-        return res.status(200).json(
-            response(200, "Success restore location")
-        );
+        return res.status(200).json(response(200, "Success restore location"));
 
     } catch (error) {
 
-        return res.status(500).json(
-            response(500, "Internal server error", error.message)
-        );
-
+        return res.status(500).json(response(500, "Server Error", error.message));
     }
 }
 }

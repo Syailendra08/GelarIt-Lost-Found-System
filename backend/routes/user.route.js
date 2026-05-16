@@ -8,4 +8,5 @@ router.get("/", userController.getUsers);
 router.get("/:id", userController.showUser);
 router.put("/:id", upload.none(), userController.updateUser);
 router.delete("/:id", userController.deleteUser);
+router.patch("/restore/:id", userController.restoreUser);
 module.exports = router
