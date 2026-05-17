@@ -86,10 +86,7 @@ module.exports = {
                             exclude: ["password"]
                         }
                     },
-                    {
-                        model: Comment,
-                        as: "comments"
-                    },
+
                     {
                         model: Request,
                         as: "requests"
@@ -118,6 +115,22 @@ module.exports = {
                         model: Location,
                         as: "location"
 
+                    },
+
+
+                    {
+                        model: Comment,
+                        as: "comments",
+
+                        include: [
+                            {
+                                model: User,
+                                as: "user",
+                                attributes: {
+                                    exclude: ["password"]
+                                }
+                            }
+                        ]
                     }
                 ]
             });
@@ -269,48 +282,48 @@ module.exports = {
     },
 
     deleteItem: async (req, res) => {
-    try {
-        const { id } = req.params;
-        const item = await Item.findByPk(id);
+        try {
+            const { id } = req.params;
+            const item = await Item.findByPk(id);
 
-        if (!item) {
+            if (!item) {
 
-            return res.status(404).json(response(404, "Item not found"));
+                return res.status(404).json(response(404, "Item not found"));
 
-        }
+            }
 
-        await Item.destroy({
-            where: { id }
-        });
-
-        return res.status(200).json(response(200, "Delete Item Success"));
-
-    } catch (error) {
-        return res.status(500).json(response(500, "Server Error", error.message));
-    }
-},
-
-    restoreItem: async (req, res) => {
-    try {
-        const { id } = req.params;
-        const item = await Item.findOne({
-            where: { id },
-            paranoid: false 
-        });
-
-        if (!item) {
-            return res.status(404).json(response(404, "Item not found"));
-        }
-
-       const restoreProcess = await Item.restore({
-                where: {id, id}
+            await Item.destroy({
+                where: { id }
             });
 
-        return res.status(200).json(response(200, "Success restore item"));
+            return res.status(200).json(response(200, "Delete Item Success"));
 
-    } catch (error) {
+        } catch (error) {
+            return res.status(500).json(response(500, "Server Error", error.message));
+        }
+    },
 
-        return res.status(500).json(response(500, "Server Error", error.message));
+    restoreItem: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const item = await Item.findOne({
+                where: { id },
+                paranoid: false
+            });
+
+            if (!item) {
+                return res.status(404).json(response(404, "Item not found"));
+            }
+
+            const restoreProcess = await Item.restore({
+                where: { id, id }
+            });
+
+            return res.status(200).json(response(200, "Success restore item"));
+
+        } catch (error) {
+
+            return res.status(500).json(response(500, "Server Error", error.message));
+        }
     }
-}
 }

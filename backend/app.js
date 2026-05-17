@@ -8,9 +8,11 @@ const categoryRoute = require("./routes/category.route");
 const userRoute = require("./routes/user.route");
 const locationRoute = require("./routes/location.route");
 const itemRoute = require("./routes/item.route");
+const commentRoute = require("./routes/comment.route");
 const methodOverride = require('method-override')
 const {checkToken} = require('./middlewares/auth')
 const {checkAdmin} = require('./middlewares/auth')
+const cors = require("cors");
 
 //mencoba koneksi ke database serta menyambungkan model ke db
 
@@ -19,12 +21,15 @@ db.sequelize.authenticate()
     .catch(err => console.error(err))
 
 app.use(express.json());
+app.use(cors());
 app.use(methodOverride("_method")); 
 app.use("/", authRoute); 
 app.use("/categories", checkToken, checkAdmin, categoryRoute) ; 
 app.use("/users", checkToken, checkAdmin, userRoute  )
 app.use("/locations", checkToken, locationRoute);
 app.use("/items", checkToken, itemRoute )
+app.use("/", checkToken, commentRoute)
+
 
 app.get('/', (req, res) => {
     res.send('hello world!')
