@@ -5,7 +5,10 @@ export default function FormInput({
   label,
   type,
   placeholder,
-}) {
+   name,
+  value,
+  onChange,
+}) {  
   return (
     <div className="space-y-1">
       {label && (
@@ -17,6 +20,9 @@ export default function FormInput({
 
       <TextInput
         type={type}
+         name={name}
+        value={value}
+        onChange={onChange}
         placeholder={placeholder}
         className="
           rounded-md border border-gray-200 bg-[#faf8ff] py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500

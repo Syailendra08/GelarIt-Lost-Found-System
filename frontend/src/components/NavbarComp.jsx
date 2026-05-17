@@ -8,7 +8,7 @@ export default function NavbarComp() {
     <nav className="border-b border-gray-200 bg-[#f8f7fc] px-6 py-3">
       <div className="mx-auto flex max-w-7xl items-center justify-between">
 
-       
+
         <div className="flex items-center gap-40">
 
           <h1 className="text-2xl font-bold text-blue-800">
@@ -16,7 +16,7 @@ export default function NavbarComp() {
           </h1>
 
           <div className="flex items-center gap-7 text-sm font-medium">
-            
+
             <Link
               to="/"
               className="border-b-2 border-blue-700 pb-1 text-blue-800"
@@ -47,19 +47,21 @@ export default function NavbarComp() {
           </div>
         </div>
 
-        
+
         <div className="flex items-center gap-3">
 
           <ButtonComp className="bg-yellow-400 text-black hover:bg-yellow-500">
             Report Item
           </ButtonComp>
 
-          <Button
-            outline
-            className="border border-blue-700 text-blue-700 hover:bg-blue-50"
-          >
-            Log In
-          </Button>
+          <Link to="/login" style={{ textDecoration: 'none' }}>
+            <Button
+              outline
+              className="border border-blue-700 text-blue-700 hover:bg-blue-50"
+            >
+              Log In
+            </Button>
+          </Link>
         </div>
       </div>
     </nav>
