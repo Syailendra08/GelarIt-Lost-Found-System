@@ -4,6 +4,15 @@ import { Link } from "react-router-dom";
 import ButtonComp from "./ButtonComp";
 
 export default function NavbarComp() {
+
+  const token = localStorage.getItem("token");
+  const handleLogout = () => {
+
+    localStorage.removeItem("token");
+
+    window.location.reload();
+
+  };
   return (
     <nav className="border-b border-gray-200 bg-[#f8f7fc] px-6 py-3">
       <div className="mx-auto flex max-w-7xl items-center justify-between">
@@ -54,14 +63,30 @@ export default function NavbarComp() {
             Report Item
           </ButtonComp>
 
-          <Link to="/login" style={{ textDecoration: 'none' }}>
-            <Button
-              outline
-              className="border border-blue-700 text-blue-700 hover:bg-blue-50"
-            >
-              Log In
-            </Button>
-          </Link>
+          {
+            token ? (
+
+              <ButtonComp
+                onClick={handleLogout}
+                className="bg-red-500 hover:bg-red-600"
+              >
+                Logout
+              </ButtonComp>
+
+            ) : (
+
+              <Link
+                to="/login"
+                style={{ textDecoration: "none" }}
+              >
+
+                <Button outline className="border border-blue-700 text-blue-700 hover:bg-blue-50">
+                  Log In
+                </Button>
+              </Link>
+
+            )
+          }
         </div>
       </div>
     </nav>

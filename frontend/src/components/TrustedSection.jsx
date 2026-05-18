@@ -1,6 +1,7 @@
 import {
     ShieldCheck,
 } from "lucide-react"
+import { motion } from "framer-motion"
 
 export default function TrustedSection() {
 
@@ -54,15 +55,26 @@ export default function TrustedSection() {
 
                 <div className="flex justify-center">
 
-                    <div className=" border-[6px] border-blue-900 rounded-3xl overflow-hidden shadow-xl rotate-1 hover:rotate-0 transition-all
-      duration-300">
+                    <motion.div
+                        animate={{
+                            y: [0, -15, 0]
+                        }}
+
+                        transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                        }}
+
+                        className="border-[6px] border-blue-900 rounded-3xl overflow-hidden shadow-xl rotate-1 hover:rotate-0 transition-all duration-300">
 
                         <img
                             src="https://smkwikrama.sch.id/storage/1684135144-page.jpg"
                             alt="SMK Wikrama"
-                            className="w-full max-w-130 h-105 object-cover"/>
+                            className="w-full max-w-130 h-105 object-cover"
+                        />
 
-                    </div>
+                    </motion.div>
                 </div>
             </div>
         </section>
