@@ -23,12 +23,14 @@ db.sequelize.authenticate()
 app.use(express.json());
 app.use(cors());
 app.use(methodOverride("_method")); 
+app.use('/uploads', express.static('uploads'))
 app.use("/", authRoute); 
 app.use("/categories", checkToken, checkAdmin, categoryRoute) ; 
 app.use("/users", checkToken, checkAdmin, userRoute  )
 app.use("/locations", checkToken, locationRoute);
-app.use("/items", checkToken, itemRoute )
+app.use("/items",  itemRoute )
 app.use("/", checkToken, commentRoute)
+
 
 
 app.get('/', (req, res) => {

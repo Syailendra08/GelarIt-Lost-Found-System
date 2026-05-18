@@ -3,31 +3,31 @@ const { response } = require('../helpers/response.formatter')
 const { auth_secret } = require('../config/base.config')
 
 module.exports = {
-    
+
 
     checkToken: async (req, res, next) => {
-       
-        const token = req.header("Authorization");
+        let token = req.header('Authorization')
         if (!token) {
-           
-            return res.status(401).json(response(401, "unauthorized", "Please login and try again!"));
+            return res.status(401).json(response(401, 'Unauthorized'))
         }
 
         try {
-           
-            const check = jwt.verify(token, auth_secret);
-            
-            req.user = check;
-            next(); 
+            if (token.startsWith('Bearer ')) {
+                token = token.slice(7, token.length);
+            }
+
+            const decoded = jwt.verify(token, auth_secret);
+
+            // simpan full user payload
+            req.user = decoded;
+
+            next();
         } catch (error) {
-            
-            return res.status(401).json(response(401, "unauthorized", "Please login and try again!"));
-
+            return res.status(401).json(response(401, 'Unauthorized'))
         }
-
     },
 
-     checkAdmin: async (req, res, next) => {
+    checkAdmin: async (req, res, next) => {
 
         try {
 
