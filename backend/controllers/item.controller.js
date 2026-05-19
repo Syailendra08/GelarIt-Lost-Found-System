@@ -69,48 +69,171 @@ module.exports = {
     },
 
     getItems: async (req, res) => {
-        try {
-            const items = await Item.findAll({
-                include: [
+    try {
 
-                    {
-                        model: Category,
-                        as: "category"
+        const { name, sortBy, order, page, limit } = req.query;
+        const currentPage = Number(page) || 1;
+        const dataLimit = Number(limit) || 5;
+        const offset = (currentPage - 1) * dataLimit;
 
-                    },
-                    {
-                        model: Location,
-                        as: "location"
+        const { count, rows } = await Item.findAndCountAll({
+            offset: offset,
+            limit: dataLimit,
 
-                    },
-                    {
-                        model: User,
-                        as: "finder",
-                        attributes: {
-                            exclude: ["password"]
-                        }
-                    },
-                    {
-                        model: User,
-                        as: "receiver",
-                        attributes: {
-                            exclude: ["password"]
-                        }
-                    },
+            where: name ? {
+                name: {
+                    [Op.like]: `%${name}%`
+                }
+            } : {},
 
-                    {
-                        model: Request,
-                        as: "requests"
+            order: sortBy && order ? [
+                [sortBy, order]
+            ] : [],
+
+            include: [
+
+                {
+                    model: Category,
+                    as: "category"
+
+                },
+
+                {
+                    model: Location,
+                    as: "location"
+
+                },
+
+                {
+                    model: User,
+                    as: "finder",
+                    attributes: {
+                        exclude: ["password"]
                     }
-                ]
-            });
+                },
 
-            return res.status(200).json(response(200, "Success get all items", items));
+                {
+                    model: User,
+                    as: "receiver",
+                    attributes: {
+                        exclude: ["password"]
+                    }
+                },
 
-        } catch (error) {
-            return res.status(500).json(response(500, "Server Error", error.message));
-        }
-    },
+                {
+                    model: Request,
+                    as: "requests"
+                }
+
+            ]
+        });
+
+        const formatPagination = {
+            data: rows,
+            limit: dataLimit,
+            rangeData: (offset + 1) + "-" + (offset + rows.length),
+            currentPage: currentPage,
+            totalPage: Math.ceil(count / dataLimit),
+            total: count,
+        };
+        return res.status(200).json(response(200, "Success get all items", formatPagination));
+
+    } catch (error) {
+        return res.status(500).json(response(500, "Server Error", error.message));
+    }
+},
+
+getItemsByUser: async (req, res) => {
+    try {
+
+        const { id } = req.params;
+
+        const { name, sortBy, order, page, limit } = req.query;
+
+        const currentPage = Number(page) || 1;
+        const dataLimit = Number(limit) || 5;
+        const offset = (currentPage - 1) * dataLimit;
+
+        const { count, rows } = await Item.findAndCountAll({
+
+            offset: offset,
+            limit: dataLimit,
+
+            where: {
+
+                finder_id: id,
+
+                ...(name && {
+                    name: {
+                        [Op.like]: `%${name}%`
+                    }
+                })
+
+            },
+
+            order: sortBy && order ? [
+                [sortBy, order]
+            ] : [],
+
+            include: [
+
+                {
+                    model: Category,
+                    as: "category"
+                },
+
+                {
+                    model: Location,
+                    as: "location"
+                },
+
+                {
+                    model: User,
+                    as: "finder",
+                    attributes: {
+                        exclude: ["password"]
+                    }
+                },
+
+                {
+                    model: User,
+                    as: "receiver",
+                    attributes: {
+                        exclude: ["password"]
+                    }
+                },
+
+                {
+                    model: Request,
+                    as: "requests"
+                }
+
+            ]
+
+        });
+
+        const formatPagination = {
+
+            data: rows,
+            limit: dataLimit,
+            rangeData:rows.length > 0
+                    ? (offset + 1) + "-" + (offset + rows.length)
+                    : "0-0",
+
+            currentPage: currentPage,
+            totalPage: Math.ceil(count / dataLimit),
+            total: count,
+
+        };
+
+        return res.status(200).json(
+            response(200, "Success get user items", formatPagination ));
+
+    } catch (error) {
+
+        return res.status(500).json(response(500, "Server Error", error.message) );
+    }
+},
 
     
 
