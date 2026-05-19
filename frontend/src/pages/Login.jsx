@@ -54,6 +54,12 @@ export default function LoginPage() {
         result.data.token
       );
 
+      localStorage.setItem(
+  "user",
+  JSON.stringify(result.data)
+);
+
+
      
 
       alert("Login Success");

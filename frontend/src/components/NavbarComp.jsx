@@ -9,6 +9,7 @@ export default function NavbarComp() {
   const handleLogout = () => {
 
     localStorage.removeItem("token");
+    localStorage.removeItem("user")
 
     window.location.reload();
 

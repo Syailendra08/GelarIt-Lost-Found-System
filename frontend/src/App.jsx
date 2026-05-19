@@ -1,23 +1,52 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 import HeroSection from "./components/HeroSection";
 import HowItWorks from "./components/HowItWorks";
-import ItemCard from "./components/ItemCard";
 import ItemList from "./components/ItemList";
 import NavbarComp from "./components/NavbarComp";
 import TrustedSection from "./components/TrustedSection";
 
-
 export default function App() {
+
+  const [items, setItems] = useState([]);
+
+  async function getItems() {
+    try {
+
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get(
+        "http://localhost:3000/items",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      setItems(response.data.data.data);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getItems();
+  }, []);
+
   return (
     <>
       <NavbarComp />
+
       <div>
 
         <section className="bg-[#eef0ff]">
+
           <HeroSection />
 
-
-          <ItemList />
-
+          <ItemList data={items} />
 
         </section>
 
@@ -27,9 +56,9 @@ export default function App() {
           </section>
         </div>
 
-      <section className="bg-[#eef0ff]">
-        <TrustedSection />
-      </section>
+        <section className="bg-[#eef0ff]">
+          <TrustedSection />
+        </section>
 
       </div>
     </>

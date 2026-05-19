@@ -1,11 +1,17 @@
 import StatusBadge from "./StatusBadge"
-
+import { motion } from "framer-motion"
 export default function ItemCard({ item }) {
 
   if (!item) return null
 
   return (
-    <div className="w-87.5 bg-[#f3f3f3] rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      viewport={{ once: true }}
+      className="w-87.5 bg-[#f3f3f3] rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition"
+    >
 
      
       <div className="h-47.5 overflow-hidden">
@@ -34,6 +40,6 @@ export default function ItemCard({ item }) {
 
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }

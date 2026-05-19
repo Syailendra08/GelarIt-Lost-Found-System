@@ -1,15 +1,16 @@
 export default function StatusBadge({ status }) {
   const colors = {
-    lost: "bg-yellow-400",
-    found: "bg-orange-400",
-    returned: "bg-green-500",
+    lost: "bg-red-500",
+    found: "bg-blue-500",
+    taken: "bg-amber-500",
+    claimed: "bg-emerald-600",
   }
 
   return (
     <span
-      className={`${colors[status]} text-white text-xs px-3 py-1 rounded-full`}
+      className={`${colors[status]} text-white text-xs px-3 py-1 rounded-full capitalize`}
     >
-      {status.toUpperCase()}
+      {status}
     </span>
   )
 }
