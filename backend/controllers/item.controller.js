@@ -4,9 +4,11 @@ const { Item, Category, Location, User, Comment, Request } = require("../models"
 const { response } = require("../helpers/response.formatter");
 const fs = require('fs');
 const path = require('path');
+const { sequelize } = require("../models");
 
 module.exports = {
     createItem: async (req, res) => {
+        const transaction = await sequelize.transaction();
         try {
 
             const schema = {
@@ -40,20 +42,29 @@ module.exports = {
 
             const validate = v.validate(data, schema);
             if (validate.length > 0) {
+                await transaction.rollback();
                 return res.status(400).json(response(400, "Validation Error", validate));
 
             }
 
             if (!req.file) {
+                await transaction.rollback();
                 return res.status(400).json(response(400, "Validation Error", "Image not found"));
             }
 
-            const item = await Item.create(data);
+            const item = await Item.create(
+                data,
+                { transaction }
+            );
+            await transaction.commit();
 
             return res.status(201).json(response(201, "Create Item success", item));
 
         } catch (error) {
 
+            await transaction.rollback();
+
+            return res.status(500).json(response(500, "Server Error", error.message));
         }
     },
 
@@ -99,6 +110,96 @@ module.exports = {
         } catch (error) {
             return res.status(500).json(response(500, "Server Error", error.message));
         }
+    },
+
+    addFoundItem: async (req, res) => {
+        const transaction = await sequelize.transaction();
+        try {
+
+            const schema = {
+
+                categories_id: {
+                    type: "number",
+                    integer: true,
+                    positive: true
+                },
+
+                locations_id: {
+                    type: "number",
+                    integer: true,
+                    positive: true
+                },
+
+                name: {
+                    type: "string",
+                    min: 3
+                },
+
+                description: {
+                    type: "string",
+                    min: 3
+                },
+
+                color: {
+                    type: "string",
+                    min: 3
+                }
+
+            };
+
+            const data = {
+
+                categories_id: Number(req.body.categories_id),
+
+                locations_id: Number(req.body.locations_id),
+
+                finder_id: req.user.id,
+
+                name: req.body.name,
+
+                description: req.body.description,
+
+                image: req.file.filename,
+
+                color: req.body.color,
+
+                status: "found"
+
+            };
+
+            const validate = v.validate(data, schema);
+
+            if (validate.length > 0) {
+
+                await transaction.rollback();
+                return res.status(400).json(response(400, "Validation Error", validate));
+
+            }
+
+            if (!req.file) {
+
+                await transaction.rollback();
+
+                return res.status(400).json(response(400, "Validation Error", "Image not found"));
+
+            }
+
+            const item = await Item.create(
+                data,
+                { transaction }
+            );
+
+            await transaction.commit();
+
+            return res.status(201).json(response(201, "Add Found Item Success", item));
+
+        } catch (error) {
+
+            await transaction.rollback();
+            return res.status(500).json(response(500, "Server Error", error.message));
+
+        }
+
     },
 
     showItem: async (req, res) => {

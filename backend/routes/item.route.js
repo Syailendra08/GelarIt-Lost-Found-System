@@ -4,8 +4,10 @@ const itemController = require("../controllers/item.controller");
 const upload = require("../middlewares/upload");
 
 router.post(
-    "/", upload.single('image'), itemController.createItem
+    "/lost", upload.single('image'), itemController.createItem
 );
+
+router.post("/found", upload.single('image'), itemController.addFoundItem);
 
 router.get(
     "/",
@@ -13,7 +15,7 @@ router.get(
 );
 
 router.get("/:id", itemController.showItem)
-router.put("/:id", upload.single('image'), itemController.updateItem)
+router.put("/:id", upload.single('image'), itemController.updateItem);
 router.delete("/:id", itemController.deleteItem)
 router.patch("/restore/:id",  itemController.restoreItem);
 

@@ -9,6 +9,7 @@ const userRoute = require("./routes/user.route");
 const locationRoute = require("./routes/location.route");
 const itemRoute = require("./routes/item.route");
 const commentRoute = require("./routes/comment.route");
+const requestRoute = require("./routes/request.route");
 const methodOverride = require('method-override')
 const {checkToken} = require('./middlewares/auth')
 const {checkAdmin} = require('./middlewares/auth')
@@ -30,6 +31,7 @@ app.use("/users", checkToken, checkAdmin, userRoute  )
 app.use("/locations", checkToken, locationRoute);
 app.use("/items",  itemRoute )
 app.use("/", checkToken, commentRoute)
+app.use("/", requestRoute );
 
 
 
