@@ -6,10 +6,12 @@ import HowItWorks from "./components/HowItWorks";
 import ItemList from "./components/ItemList";
 import NavbarComp from "./components/NavbarComp";
 import TrustedSection from "./components/TrustedSection";
+import { Spinner } from "flowbite-react";
 
 export default function App() {
 
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   async function getItems() {
     try {
@@ -26,6 +28,7 @@ export default function App() {
       );
 
       setItems(response.data.data.data);
+      setLoading (false);
 
     } catch (error) {
       console.log(error);
@@ -35,6 +38,15 @@ export default function App() {
   useEffect(() => {
     getItems();
   }, []);
+
+  if (loading) {
+  return (
+    <div className="flex justify-center mt-90" size="s">
+      <Spinner aria-label="Default status example" />
+      Sedang mengambil data...
+    </div>
+  )
+}
 
   return (
     <>

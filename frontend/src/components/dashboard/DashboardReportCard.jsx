@@ -1,3 +1,4 @@
+import { CalendarDays, MapPin } from "lucide-react"
 import StatusBadge from "../StatusBadge"
 import { motion } from "framer-motion"
 
@@ -51,13 +52,13 @@ export default function DashboardReportCard({ report }) {
         <div className="mt-4 space-y-2 text-sm text-gray-500">
 
           <p>
-            📅 Reported: {
-              new Date(report.createdAt).toLocaleDateString()
+             <CalendarDays /> Reported: {
+              new Date(report.date).toLocaleDateString()
             }
           </p>
 
           <p>
-            🏷️ Category: {report.category?.name}
+            <MapPin className="sm" /> Category: {report.category?.name}
           </p>
 
         </div>

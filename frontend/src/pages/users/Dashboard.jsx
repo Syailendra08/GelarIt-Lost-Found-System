@@ -1,46 +1,45 @@
-import { useEffect, useState } from "react"
-import axios from "axios"
+import { useContext, useEffect, useState } from "react"
 
 import WelcomeSection from "../../components/dashboard/WelcomeSection"
 import QuickActions from "../../components/dashboard/QuickActions"
 
 import DashboardReportList from "../../components/dashboard/DashboardReportList"
 import NavbarComp from "../../components/NavbarComp"
+import { getItemsByUser } from "../../api/item.api"
+import { AuthContext } from "../../contexts/AuthContext"
+
 
 export default function Dashboard() {
-    const user = JSON.parse(localStorage.getItem("user"))
+  const [reports, setReports] = useState([]);
+  const { user } = useContext(AuthContext);
 
-  const [reports, setReports] = useState([])
-
-  async function fetchDashboard() {
+  async function fetchDashboard(userId) {
     try {
 
-      const user = JSON.parse(localStorage.getItem("user"))
-const token = localStorage.getItem("token")
+     const result = await getItemsByUser(userId);
+    setReports(result.data?.data || []);
 
-const reportResponse = await axios.get(
-  `http://localhost:3000/items/users/${user.id}`,
-  {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  }
-)
-
-    setReports(reportResponse.data.data?.data || [])
     
-console.log(reportResponse.data)
+
+      
+
     } catch (error) {
-      console.log(error)
+
+      console.log(error);
+
     }
   }
 
   useEffect(() => {
-    fetchDashboard()
-  }, [])
+  if (user?.id) {
+    fetchDashboard(user.id);
+  }
+}, [user]);
 
-  return ( <>
+
+  return (<>
     <NavbarComp />
+
     <div className="min-h-screen bg-[#f5f5f7] p-6">
 
       <WelcomeSection user={user} />
@@ -49,7 +48,7 @@ console.log(reportResponse.data)
 
       <div className="grid grid-cols-12 gap-5 mt-8">
 
-        
+
         <div className="col-span-8">
 
           <div className="flex items-center justify-between mb-4">
@@ -68,9 +67,9 @@ console.log(reportResponse.data)
 
         </div>
 
-       
+
       </div>
     </div>
-    </>
+  </>
   )
 }

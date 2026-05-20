@@ -3,8 +3,12 @@ import { useState } from "react";
 import FormInput from "../components/FormInput";
 import ButtonComp from "../components/ButtonComp";
 import { Link, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../contexts/AuthContext";
+import Swal from "sweetalert2";
 
 export default function LoginPage() {
+  const { login } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -39,7 +43,7 @@ export default function LoginPage() {
 
       const result = await response.json();
 
-      // kalau login gagal
+
       if (response.status !== 200) {
 
         throw new Error(
@@ -48,29 +52,28 @@ export default function LoginPage() {
 
       }
 
-      // simpan token JWT
-      localStorage.setItem(
-        "token",
-        result.data.token
-      );
+      
+      login(result.data.token, result.data);
 
-      localStorage.setItem(
-  "user",
-  JSON.stringify(result.data)
-);
+      Swal.fire({
+        icon: "success",
+        title: "Login berhasil",
+        timer: 1200,
+        showConfirmButton: false,
+      });
 
-
-     
-
-      alert("Login Success");
-
-      navigate("/");
+      navigate("/dashboard");
 
     } catch (error) {
 
       console.log(error);
 
-      alert(error.message);
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        timer: 1200,
+        showConfirmButton: false,
+      });
 
     }
 
