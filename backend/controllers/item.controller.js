@@ -17,6 +17,12 @@ module.exports = {
                 name: { type: "string", min: 3 },
                 description: { type: "string", min: 3 },
                 color: { type: "string", min: 3 },
+
+                date: {
+                    type: "date",
+                    optional: true
+                },
+
                 status: {
                     type: "enum",
                     values: [
@@ -26,7 +32,9 @@ module.exports = {
                         "taken",
                         "swapped"
                     ]
-                }
+                },
+
+                
             };
 
             const data = {
@@ -37,7 +45,9 @@ module.exports = {
                 description: req.body.description,
                 image: req.file.filename,
                 color: req.body.color,
+                date: req.body.date,
                 status: req.body.status
+                
             };
 
             const validate = v.validate(data, schema);
@@ -69,173 +79,173 @@ module.exports = {
     },
 
     getItems: async (req, res) => {
-    try {
+        try {
 
-        const { name, sortBy, order, page, limit } = req.query;
-        const currentPage = Number(page) || 1;
-        const dataLimit = Number(limit) || 5;
-        const offset = (currentPage - 1) * dataLimit;
+            const { name, sortBy, order, page, limit } = req.query;
+            const currentPage = Number(page) || 1;
+            const dataLimit = Number(limit) || 5;
+            const offset = (currentPage - 1) * dataLimit;
 
-        const { count, rows } = await Item.findAndCountAll({
-            offset: offset,
-            limit: dataLimit,
+            const { count, rows } = await Item.findAndCountAll({
+                offset: offset,
+                limit: dataLimit,
 
-            where: name ? {
-                name: {
-                    [Op.like]: `%${name}%`
-                }
-            } : {},
-
-            order: sortBy && order ? [
-                [sortBy, order]
-            ] : [],
-
-            include: [
-
-                {
-                    model: Category,
-                    as: "category"
-
-                },
-
-                {
-                    model: Location,
-                    as: "location"
-
-                },
-
-                {
-                    model: User,
-                    as: "finder",
-                    attributes: {
-                        exclude: ["password"]
-                    }
-                },
-
-                {
-                    model: User,
-                    as: "receiver",
-                    attributes: {
-                        exclude: ["password"]
-                    }
-                },
-
-                {
-                    model: Request,
-                    as: "requests"
-                }
-
-            ]
-        });
-
-        const formatPagination = {
-            data: rows,
-            limit: dataLimit,
-            rangeData: (offset + 1) + "-" + (offset + rows.length),
-            currentPage: currentPage,
-            totalPage: Math.ceil(count / dataLimit),
-            total: count,
-        };
-        return res.status(200).json(response(200, "Success get all items", formatPagination));
-
-    } catch (error) {
-        return res.status(500).json(response(500, "Server Error", error.message));
-    }
-},
-
-getItemsByUser: async (req, res) => {
-    try {
-
-        const { id } = req.params;
-
-        const { name, sortBy, order, page, limit } = req.query;
-
-        const currentPage = Number(page) || 1;
-        const dataLimit = Number(limit) || 5;
-        const offset = (currentPage - 1) * dataLimit;
-
-        const { count, rows } = await Item.findAndCountAll({
-
-            offset: offset,
-            limit: dataLimit,
-
-            where: {
-
-                finder_id: id,
-
-                ...(name && {
+                where: name ? {
                     name: {
                         [Op.like]: `%${name}%`
                     }
-                })
+                } : {},
 
-            },
+                order: sortBy && order ? [
+                    [sortBy, order]
+                ] : [],
 
-            order: sortBy && order ? [
-                [sortBy, order]
-            ] : [],
+                include: [
 
-            include: [
+                    {
+                        model: Category,
+                        as: "category"
 
-                {
-                    model: Category,
-                    as: "category"
-                },
+                    },
 
-                {
-                    model: Location,
-                    as: "location"
-                },
+                    {
+                        model: Location,
+                        as: "location"
 
-                {
-                    model: User,
-                    as: "finder",
-                    attributes: {
-                        exclude: ["password"]
+                    },
+
+                    {
+                        model: User,
+                        as: "finder",
+                        attributes: {
+                            exclude: ["password"]
+                        }
+                    },
+
+                    {
+                        model: User,
+                        as: "receiver",
+                        attributes: {
+                            exclude: ["password"]
+                        }
+                    },
+
+                    {
+                        model: Request,
+                        as: "requests"
                     }
+
+                ]
+            });
+
+            const formatPagination = {
+                data: rows,
+                limit: dataLimit,
+                rangeData: (offset + 1) + "-" + (offset + rows.length),
+                currentPage: currentPage,
+                totalPage: Math.ceil(count / dataLimit),
+                total: count,
+            };
+            return res.status(200).json(response(200, "Success get all items", formatPagination));
+
+        } catch (error) {
+            return res.status(500).json(response(500, "Server Error", error.message));
+        }
+    },
+
+    getItemsByUser: async (req, res) => {
+        try {
+
+            const { id } = req.params;
+
+            const { name, sortBy, order, page, limit } = req.query;
+
+            const currentPage = Number(page) || 1;
+            const dataLimit = Number(limit) || 5;
+            const offset = (currentPage - 1) * dataLimit;
+
+            const { count, rows } = await Item.findAndCountAll({
+
+                offset: offset,
+                limit: dataLimit,
+
+                where: {
+
+                    finder_id: id,
+
+                    ...(name && {
+                        name: {
+                            [Op.like]: `%${name}%`
+                        }
+                    })
+
                 },
 
-                {
-                    model: User,
-                    as: "receiver",
-                    attributes: {
-                        exclude: ["password"]
+                order: sortBy && order ? [
+                    [sortBy, order]
+                ] : [],
+
+                include: [
+
+                    {
+                        model: Category,
+                        as: "category"
+                    },
+
+                    {
+                        model: Location,
+                        as: "location"
+                    },
+
+                    {
+                        model: User,
+                        as: "finder",
+                        attributes: {
+                            exclude: ["password"]
+                        }
+                    },
+
+                    {
+                        model: User,
+                        as: "receiver",
+                        attributes: {
+                            exclude: ["password"]
+                        }
+                    },
+
+                    {
+                        model: Request,
+                        as: "requests"
                     }
-                },
 
-                {
-                    model: Request,
-                    as: "requests"
-                }
+                ]
 
-            ]
+            });
 
-        });
+            const formatPagination = {
 
-        const formatPagination = {
-
-            data: rows,
-            limit: dataLimit,
-            rangeData:rows.length > 0
+                data: rows,
+                limit: dataLimit,
+                rangeData: rows.length > 0
                     ? (offset + 1) + "-" + (offset + rows.length)
                     : "0-0",
 
-            currentPage: currentPage,
-            totalPage: Math.ceil(count / dataLimit),
-            total: count,
+                currentPage: currentPage,
+                totalPage: Math.ceil(count / dataLimit),
+                total: count,
 
-        };
+            };
 
-        return res.status(200).json(
-            response(200, "Success get user items", formatPagination ));
+            return res.status(200).json(
+                response(200, "Success get user items", formatPagination));
 
-    } catch (error) {
+        } catch (error) {
 
-        return res.status(500).json(response(500, "Server Error", error.message) );
-    }
-},
+            return res.status(500).json(response(500, "Server Error", error.message));
+        }
+    },
 
-    
+
 
     showItem: async (req, res) => {
         try {
@@ -337,6 +347,11 @@ getItemsByUser: async (req, res) => {
                     optional: true
                 },
 
+                date: {
+                    type: "date",
+                    optional: true
+                },
+
                 status: {
                     type: "enum",
                     values: [
@@ -367,6 +382,7 @@ getItemsByUser: async (req, res) => {
                 name: req.body.name,
                 description: req.body.description,
                 color: req.body.color,
+                date: req.body.date,
                 status: req.body.status
 
             };
@@ -400,6 +416,7 @@ getItemsByUser: async (req, res) => {
                 name: data.name ?? item.name,
                 description: data.description ?? item.description,
                 color: data.color ?? item.color,
+                date: data.date ?? item.date,
                 status: data.status ?? item.status,
                 image: req.file
                     ? req.file.filename

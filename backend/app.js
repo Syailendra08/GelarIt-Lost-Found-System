@@ -27,6 +27,7 @@ app.use(methodOverride("_method"));
 app.use('/uploads', express.static('uploads'))
 app.use("/", authRoute); 
 app.use("/categories", checkToken, checkAdmin, categoryRoute) ; 
+// CRUD User management untuk admin makanya pake checkAdmin
 app.use("/users", checkToken, checkAdmin, userRoute  )
 app.use("/locations", checkToken, locationRoute);
 app.use("/items",  itemRoute )

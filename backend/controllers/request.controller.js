@@ -176,9 +176,7 @@ module.exports = {
     },
 
     approveRequest: async (req, res) => {
-
         const transaction = await sequelize.transaction();
-
         try {
 
             const request = await Request.findByPk(req.params.id, {

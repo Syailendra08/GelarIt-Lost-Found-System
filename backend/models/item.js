@@ -91,7 +91,11 @@ module.exports = (sequelize, DataTypes) => {
       ),
       allowNull: false,
       defaultValue: 'lost'
-    }
+    },
+    date: {
+  type: DataTypes.DATE,
+  allowNull: true
+},
   }, {
     sequelize,
     modelName: 'Item',
