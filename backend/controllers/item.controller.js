@@ -8,76 +8,79 @@ const { sequelize } = require("../models");
 
 module.exports = {
     createItem: async (req, res) => {
-        const transaction = await sequelize.transaction();
-        try {
+    const transaction = await sequelize.transaction();
 
-            const schema = {
-                categories_id: { type: "number", integer: true, positive: true },
-                locations_id: { type: "number", integer: true, positive: true },
-                name: { type: "string", min: 3 },
-                description: { type: "string", min: 3 },
-                color: { type: "string", min: 3 },
+    try {
 
-                date: {
-                    type: "date",
-                    optional: true
-                },
+        if (!req.file) {
+            await transaction.rollback();
 
-                status: {
-                    type: "enum",
-                    values: [
-                        "lost",
-                        "found",
-                        "claimed",
-                        "taken",
-                        "swapped"
-                    ]
-                },
+            return res.status(400).json(response(400, "Validation Error", "Image not found"));
+        }
 
-                
-            };
-
-            const data = {
-                categories_id: Number(req.body.categories_id),
-                locations_id: Number(req.body.locations_id),
-                finder_id: req.user.id,
-                name: req.body.name,
-                description: req.body.description,
-                image: req.file.filename,
-                color: req.body.color,
-                date: req.body.date,
-                status: req.body.status
-                
-            };
-
-            const validate = v.validate(data, schema);
-            if (validate.length > 0) {
-                await transaction.rollback();
-                return res.status(400).json(response(400, "Validation Error", validate));
-
+        const schema = {
+            categories_id: {type: "number", integer: true, positive: true},
+            locations_id: {type: "number", integer: true, positive: true},
+            name: {type: "string", min: 3},
+            description: {type: "string", min: 3},
+            color: {type: "string", min: 3},
+            date: {type: "string", optional: true},
+            status: {
+                type: "enum",
+                values: [
+                    "lost",
+                    "found",
+                    "claimed",
+                    "taken",
+                    "swapped"
+                ]
             }
+        };
 
-            if (!req.file) {
-                await transaction.rollback();
-                return res.status(400).json(response(400, "Validation Error", "Image not found"));
-            }
+        const data = {
 
-            const item = await Item.create(
-                data,
-                { transaction }
-            );
-            await transaction.commit();
+            categories_id: Number(req.body.categories_id),
+            locations_id: Number(req.body.locations_id),
+            finder_id: req.user.id,
+            name: req.body.name,
+            description: req.body.description,
+            image: req.file.filename,
+            color: req.body.color,
+            date: req.body.date,
+            status: req.body.status
+        };
 
-            return res.status(201).json(response(201, "Create Item success", item));
+       
 
-        } catch (error) {
+       
+
+const validate = v.validate(data, schema);
+
+        if (validate.length > 0) {
 
             await transaction.rollback();
 
-            return res.status(500).json(response(500, "Server Error", error.message));
+            return res.status(400).json(response(400, "Validation Error", validate));
         }
-    },
 
+        const item = await Item.create(
+            data,
+            { transaction }
+        );
+
+        await transaction.commit();
+
+        return res.status(201).json(response(201, "Create Item Success", item));
+
+    } catch (error) {
+
+        await transaction.rollback();
+
+        console.log(error);
+
+        return res.status(500).json(response(500, "Server Error", error.message));
+    }
+},
     getItems: async (req, res) => {
         try {
 
