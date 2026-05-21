@@ -1,85 +1,91 @@
 const Validator = require("fastest-validator");
 const v = new Validator();
+const exceljs = require("exceljs");
 const { Item, Category, Location, User, Comment, Request } = require("../models");
 const { response } = require("../helpers/response.formatter");
 const fs = require('fs');
 const path = require('path');
 const { sequelize } = require("../models");
+const { Op } = require("sequelize");
+
+
 
 module.exports = {
     createItem: async (req, res) => {
-    const transaction = await sequelize.transaction();
+        const transaction = await sequelize.transaction();
 
-    try {
+        try {
 
-        if (!req.file) {
-            await transaction.rollback();
+            if (!req.file) {
+                await transaction.rollback();
 
-            return res.status(400).json(response(400, "Validation Error", "Image not found"));
-        }
-
-        const schema = {
-            categories_id: {type: "number", integer: true, positive: true},
-            locations_id: {type: "number", integer: true, positive: true},
-            name: {type: "string", min: 3},
-            description: {type: "string", min: 3},
-            color: {type: "string", min: 3},
-            date: {type: "string", optional: true},
-            status: {
-                type: "enum",
-                values: [
-                    "lost",
-                    "found",
-                    "claimed",
-                    "taken",
-                    "swapped"
-                ]
+                return res.status(400).json(response(400, "Validation Error", "Image not found"));
             }
-        };
 
-        const data = {
+            const schema = {
+                categories_id: { type: "number", integer: true, positive: true },
+                locations_id: { type: "number", integer: true, positive: true },
+                name: { type: "string", min: 3 },
+                description: { type: "string", min: 3 },
+                color: { type: "string", min: 3 },
+                date: { type: "string", optional: true },
+                status: {
+                    type: "enum",
+                    values: [
+                        "lost",
+                        "found",
+                        "claimed",
+                        "taken",
+                        "swapped"
+                    ]
+                }
+            };
 
-            categories_id: Number(req.body.categories_id),
-            locations_id: Number(req.body.locations_id),
-            finder_id: req.user.id,
-            name: req.body.name,
-            description: req.body.description,
-            image: req.file.filename,
-            color: req.body.color,
-            date: req.body.date,
-            status: req.body.status
-        };
+            const data = {
 
-       
+                categories_id: Number(req.body.categories_id),
+                locations_id: Number(req.body.locations_id),
+                finder_id: req.user.id,
+                name: req.body.name,
+                description: req.body.description,
+                image: req.file.filename,
+                color: req.body.color,
+                date: req.body.date,
+                status: req.body.status
+            };
 
-       
 
-const validate = v.validate(data, schema);
-        if (validate.length > 0) {
+
+
+
+            const validate = v.validate(data, schema);
+            if (validate.length > 0) {
+
+                await transaction.rollback();
+
+                return res.status(400).json(response(400, "Validation Error", validate));
+            }
+
+            const item = await Item.create(
+                data,
+                { transaction }
+            );
+
+            await transaction.commit();
+
+            return res.status(201).json(response(201, "Create Item Success", item));
+
+        } catch (error) {
 
             await transaction.rollback();
 
-            return res.status(400).json(response(400, "Validation Error", validate));
+            console.log(error);
+
+            return res.status(500).json(response(500, "Server Error", error.message));
         }
+    },
 
-        const item = await Item.create(
-            data,
-            { transaction }
-        );
 
-        await transaction.commit();
-
-        return res.status(201).json(response(201, "Create Item Success", item));
-
-    } catch (error) {
-
-        await transaction.rollback();
-
-        console.log(error);
-
-        return res.status(500).json(response(500, "Server Error", error.message));
-    }
-},
     getItems: async (req, res) => {
         try {
 
@@ -87,16 +93,26 @@ const validate = v.validate(data, schema);
             const currentPage = Number(page) || 1;
             const dataLimit = Number(limit) || 5;
             const offset = (currentPage - 1) * dataLimit;
+            const whereClause = {};
+
+            if (req.query.name) {
+                whereClause.name = {
+                    [Op.like]: `%${req.query.name}%`,
+                };
+            }
+
+            if (req.query.category_id) {
+                whereClause.categories_id = req.query.category_id;
+            }
+
+            if (req.query.location_id) {
+                whereClause.locations_id = req.query.location_id;
+            }
 
             const { count, rows } = await Item.findAndCountAll({
                 offset: offset,
                 limit: dataLimit,
-
-                where: name ? {
-                    name: {
-                        [Op.like]: `%${name}%`
-                    }
-                } : {},
+                where: whereClause,
 
                 order: sortBy && order ? [
                     [sortBy, order]
@@ -139,6 +155,8 @@ const validate = v.validate(data, schema);
 
                 ]
             });
+
+
 
             const formatPagination = {
                 data: rows,
@@ -166,63 +184,51 @@ const validate = v.validate(data, schema);
             const dataLimit = Number(limit) || 5;
             const offset = (currentPage - 1) * dataLimit;
 
-            const { count, rows } = await Item.findAndCountAll({
+           const { count, rows } = await Item.findAndCountAll({
+    offset: offset,
+    limit: dataLimit,
 
-                offset: offset,
-                limit: dataLimit,
+    where: whereClause,
 
-                where: {
+    order: sortBy && order ? [
+        [sortBy, order]
+    ] : [],
 
-                    finder_id: id,
+    include: [
 
-                    ...(name && {
-                        name: {
-                            [Op.like]: `%${name}%`
-                        }
-                    })
+        {
+            model: Category,
+            as: "category"
+        },
 
-                },
+        {
+            model: Location,
+            as: "location"
+        },
 
-                order: sortBy && order ? [
-                    [sortBy, order]
-                ] : [],
+        {
+            model: User,
+            as: "finder",
+            attributes: {
+                exclude: ["password"]
+            }
+        },
 
-                include: [
+        {
+            model: User,
+            as: "receiver",
+            attributes: {
+                exclude: ["password"]
+            }
+        },
 
-                    {
-                        model: Category,
-                        as: "category"
-                    },
+        {
+            model: Request,
+            as: "requests"
+        }
 
-                    {
-                        model: Location,
-                        as: "location"
-                    },
-
-                    {
-                        model: User,
-                        as: "finder",
-                        attributes: {
-                            exclude: ["password"]
-                        }
-                    },
-
-                    {
-                        model: User,
-                        as: "receiver",
-                        attributes: {
-                            exclude: ["password"]
-                        }
-                    },
-
-                    {
-                        model: Request,
-                        as: "requests"
-                    }
-
-                ]
-
-            });
+    ]
+});
 
             const formatPagination = {
 
@@ -350,7 +356,7 @@ const validate = v.validate(data, schema);
                 },
 
                 date: {
-                    type: "date",
+                    type: "string",
                     optional: true
                 },
 
@@ -458,6 +464,52 @@ const validate = v.validate(data, schema);
         }
     },
 
+    getTrashItems: async (req, res) => {
+        try {
+            const items = await Item.findAll({
+                where: {
+                    deletedAt: {
+                        [Op.ne]: null
+                    }
+                },
+                paranoid: false,
+                include: [
+
+                    {
+                        model: Category,
+                        as: "category"
+                    },
+
+                    {
+                        model: Location,
+                        as: "location"
+                    },
+
+                    {
+                        model: User,
+                        as: "finder",
+                        attributes: {
+                            exclude: ["password"]
+                        }
+                    },
+
+                    {
+                        model: User,
+                        as: "receiver",
+                        attributes: {
+                            exclude: ["password"]
+                        }
+                    }
+                ]
+            });
+
+            return res.status(200).json(response(200, "Success get trash items", items));
+
+        } catch (error) {
+            return res.status(500).json(response(500, "Server Error", error.message));
+        }
+    },
+
     restoreItem: async (req, res) => {
         try {
             const { id } = req.params;
@@ -471,14 +523,141 @@ const validate = v.validate(data, schema);
             }
 
             const restoreProcess = await Item.restore({
-                where: { id, id }
+                where: { id }
             });
 
             return res.status(200).json(response(200, "Success restore item"));
-
         } catch (error) {
 
             return res.status(500).json(response(500, "Server Error", error.message));
         }
-    }
+    },
+
+    forceDeleteItem: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const item = await Item.findOne({
+                where: { id },
+                paranoid: false
+            });
+
+            if (!item) {
+                return res.status(404).json(response(404, "Item not found"));
+            }
+
+            const imageName = item.getDataValue("image");
+
+            if (imageName) {
+
+                const filePath = path.join(
+                    __dirname,
+                    "../uploads",
+                    imageName
+                );
+
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
+            }
+
+            await Item.destroy({
+                where: { id },
+                force: true
+            });
+
+            return res.status(200).json(response(200, "Force delete item success"));
+
+        } catch (error) {
+            return res.status(500).json(response(500, "Server Error", error.message));
+        }
+    },
+
+    exportItems: async (req, res) => {
+        try {
+            const items = await Item.findAll({
+                include: [
+
+                    {
+                        model: Category,
+                        as: "category"
+                    },
+
+                    {
+                        model: Location,
+                        as: "location"
+                    },
+
+                    {
+                        model: User,
+                        as: "finder",
+                        attributes: {
+                            exclude: ["password"]
+                        }
+                    },
+
+                    {
+                        model: User,
+                        as: "receiver",
+                        attributes: {
+                            exclude: ["password"]
+                        }
+                    }
+
+                ]
+            });
+
+            const workbook = new exceljs.Workbook();
+            const sheet = workbook.addWorksheet("Daftar Items");
+
+            sheet.columns = [
+                { header: "ID", key: "id", width: 10 },
+                { header: "Nama Item", key: "name", width: 25 },
+                { header: "Description", key: "description", width: 35 },
+                { header: "Color", key: "color", width: 20 },
+                { header: "Status", key: "status", width: 20 },
+                { header: "Category", key: "category", width: 20 },
+                { header: "Location", key: "location", width: 20 },
+                { header: "Finder", key: "finder", width: 20 },
+                { header: "Receiver", key: "receiver", width: 20 },
+                { header: "Created At", key: "createdAt", width: 25 },
+            ];
+
+            items.forEach(item => {
+
+                sheet.addRow({
+                    id: item.id,
+                    name: item.name,
+                    description: item.description,
+                    color: item.color,
+                    status: item.status,
+                    category: item.category?.name,
+                    location: item.location?.name,
+                    finder: item.finder?.name,
+                    receiver: item.receiver?.name || "-",
+                    createdAt: item.createdAt
+                });
+
+            });
+
+            sheet.getRow(1).font = {
+                bold: true
+            };
+
+            res.setHeader(
+                "Content-Type",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+
+            res.setHeader(
+                "Content-Disposition",
+                "attachment; filename=daftar-items.xlsx"
+            );
+
+            await workbook.xlsx.write(res);
+            res.end();
+        } catch (error) {
+
+            return res.status(500).json(response(500, "Server Error", error.message));
+        }
+    },
 }
