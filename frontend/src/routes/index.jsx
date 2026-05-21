@@ -6,6 +6,10 @@ import Dashboard from "../pages/users/Dashboard";
 import ProtectedRoute from "../components/ProtectedRoute";
 import CreateItem from "../pages/items/CreateItem";
 
+import EditItem from "../pages/items/EditItem";
+import GalleryPage from "../pages/users/GalleryPage";
+import ItemDetailPage from "../pages/users/ItemDetailPage";
+
 export const router = createBrowserRouter([
     {path: "/",element: <App />},
     {path: "/register", element: <RegisterPage />},
@@ -16,7 +20,11 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute />,
         children: [
             {path: "/dashboard", element: <Dashboard />},
-            {path: "/items/create", element: <CreateItem />}
+            {path: "/items/create", element: <CreateItem />},
+            {path: "/items/edit/:id", element: <EditItem />},
+            {path: "/gallery-page", element: <GalleryPage />},
+            {path: "/items/:id",element: <ItemDetailPage />
+}
         ]
     }
 ]);

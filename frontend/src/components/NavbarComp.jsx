@@ -32,7 +32,7 @@ export default function NavbarComp() {
           </Link>
 
           <Link
-            to="/browse"
+            to="/gallery-page"
             className="text-gray-500 transition hover:text-gray-800"
           >
             Browse Items

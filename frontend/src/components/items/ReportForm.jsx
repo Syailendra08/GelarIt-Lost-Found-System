@@ -6,7 +6,9 @@ import { CloudUpload } from "lucide-react";
 export default function ReportForm({
     onSubmit,
     loading = false,
-    submitText = "Submit Report",
+    submitText = "",
+    titleText = "",
+     initialData
 }) {
     const [categories, setCategories] = useState([]);
     const [locations, setLocations] = useState([]);
@@ -75,6 +77,30 @@ export default function ReportForm({
         fetchData();
     }, []);
 
+    useEffect(() => {
+
+    if (!initialData) return;
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setForm({
+        itemName: initialData.name || "",
+        category: initialData.categories_id || "",
+        location: initialData.locations_id || "",
+        date: initialData.date
+            ? initialData.date.split("T")[0]
+            : "",
+        description: initialData.description || "",
+        color: initialData.color || "",
+        status: initialData.status || "lost",
+        image: null,
+    });
+
+    if (initialData.image) {
+        setImagePreview(initialData.image);
+    }
+
+}, [initialData]);
+
     return (
         <div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center p-6">
   <form
@@ -84,7 +110,7 @@ export default function ReportForm({
     
     <div className="mb-8">
       <h1 className="text-3xl font-bold text-gray-800">
-        Report a Lost Item
+        {titleText}
       </h1>
 
       <p className="text-sm text-gray-500 mt-1">
@@ -92,7 +118,6 @@ export default function ReportForm({
       </p>
     </div>
 
-    {/* ITEM NAME */}
     <div className="mb-5">
       <label className="block text-sm font-semibold text-gray-700 mb-2">
         Item Name
@@ -145,7 +170,7 @@ export default function ReportForm({
       </div>
     </div>
 
-    {/* LOCATION */}
+  
     <div className="mb-5">
       <label className="block text-sm font-semibold text-gray-700 mb-2">
         Last Seen Location
@@ -167,7 +192,7 @@ export default function ReportForm({
       </select>
     </div>
 
-    {/* COLOR + STATUS */}
+   
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
