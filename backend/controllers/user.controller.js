@@ -1,9 +1,11 @@
 const Validator = require("fastest-validator");
 const v = new Validator();
 const passwordHash = require("password-hash");
+const exceljs = require("exceljs");
 const { User, Item } = require("../models");
 const { response } = require("../helpers/response.formatter");
 const { Op } = require("sequelize");
+
 
 module.exports = {
 
@@ -213,6 +215,28 @@ module.exports = {
         }
     },
 
+    getTrashUsers: async (req, res) => {
+    try {
+
+        const users = await User.findAll({
+            where: {
+                deletedAt: {
+                    [Op.ne]: null
+                }
+            },
+            paranoid: false,
+            attributes: {
+                exclude: ["password"]
+            }
+        });
+
+        return res.status(200).json(response(200, "Success get trash users", users));
+
+    } catch (error) {
+        return res.status(500).json(response(500, "Server Error", error.message));
+    }
+},
+
     restoreUser: async (req, res) => {
     try {
         const { id } = req.params;
@@ -235,7 +259,109 @@ module.exports = {
 
         return res.status(500).json(response(500, "Server Error", error.message));
     }
-}
+},
 
+forceDeleteUser: async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const user = await User.findOne({
+            where: { id },
+            paranoid: false
+        });
+
+        if (!user) {
+            return res.status(404).json(
+                response(404, "User not found")
+            );
+        }
+
+        await User.destroy({
+            where: { id },
+            force: true
+        });
+
+        return res.status(200).json(response(200, "Force delete user success"));
+
+    } catch (error) {
+        return res.status(500).json(response(500, "Server Error", error.message));
+    }
+},
+
+exportUsers: async (req, res) => {
+        try {
+            const users = await User.findAll({
+                attributes: {
+                    exclude: ["password"]
+                },
+
+                include: [
+                    {
+                        model: Item,
+                        as: "foundItems"
+                    },
+                    {
+                        model: Item,
+                        as: "receivedItems"
+                    }
+                ]
+            });
+
+            const workbook = new exceljs.Workbook();
+
+            const sheet = workbook.addWorksheet("Daftar Users");
+
+            sheet.columns = [
+                { header: "ID", key: "id", width: 10 },
+                { header: "Nama", key: "name", width: 25 },
+                { header: "Email", key: "email", width: 30 },
+                { header: "Role", key: "role", width: 15 },
+                { header: "Total Found Items", key: "foundItems", width: 20 },
+                { header: "Total Received Items", key: "receivedItems", width: 22 },
+                { header: "Created At", key: "createdAt", width: 25 },
+            ];
+
+            users.forEach(user => {
+
+                sheet.addRow({
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+
+                    foundItems: user.foundItems.length,
+                    receivedItems: user.receivedItems.length,
+
+                    createdAt: user.createdAt
+                });
+
+            });
+
+          
+            sheet.getRow(1).font = {
+                bold: true
+            };
+
+           
+            res.setHeader(
+                "Content-Type",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+
+            res.setHeader(
+                "Content-Disposition",
+                "attachment; filename=daftar-users.xlsx"
+            );
+
+            //! kirim file excel ke response
+            await workbook.xlsx.write(res);
+
+            //! tutup response
+            res.end();
+
+        } catch (error) {
+            return res.status(500).json(response(500, "Server Error", error.message));
+        }
+    }
 
 }

@@ -1,5 +1,6 @@
 const Validator = require("fastest-validator");
 const v = new Validator();
+const exceljs = require("exceljs");
 
 const {
     Location,
@@ -176,12 +177,44 @@ module.exports = {
         }
     },
 
-    restoreLocation: async (req, res) => {
+    getTrashLocations: async (req, res) => {
+    try {
+
+        const locations = await Location.findAll({
+            where: {
+                deletedAt: {
+                    [Op.ne]: null
+                }
+            },
+
+            paranoid: false,
+
+            include: [
+                {
+                    model: Item,
+                    as: "items"
+                }
+            ]
+        });
+
+        return res.status(200).json(
+            response(200, "Success get trash locations", locations)
+        );
+
+    } catch (error) {
+
+        return res.status(500).json(
+            response(500, "Server Error", error.message)
+        );
+    }
+},
+
+restoreLocation: async (req, res) => {
     try {
         const { id } = req.params;
         const location = await Location.findOne({
             where: { id },
-            paranoid: false 
+            paranoid: false
         });
 
         if (!location) {
@@ -190,9 +223,9 @@ module.exports = {
             );
         }
 
-       const restoreProcess = await Location.restore({
-                where: {id, id}
-            });
+        const restoreProcess = await Location.restore({
+            where: { id }
+        });
 
         return res.status(200).json(response(200, "Success restore location"));
 
@@ -200,5 +233,89 @@ module.exports = {
 
         return res.status(500).json(response(500, "Server Error", error.message));
     }
+},
+
+forceDeleteLocation: async (req, res) => {
+    try {
+
+        const { id } = req.params;
+
+        const location = await Location.findOne({
+            where: { id },
+            paranoid: false
+        });
+
+        if (!location) {
+            return res.status(404).json(response(404, "Location not found"));
+        }
+
+        await Location.destroy({
+            where: { id },
+            force: true
+        });
+
+        return res.status(200).json(response(200, "Force delete location success"));
+
+    } catch (error) {
+        return res.status(500).json(response(500, "Server Error", error.message));
+    }
+},
+
+exportLocations: async (req, res) => {
+    try {
+        const locations = await Location.findAll({
+            include: [
+                {
+                    model: Item,
+                    as: "items"
+                }
+            ]
+        });
+
+        const workbook = new exceljs.Workbook();
+        const sheet = workbook.addWorksheet("Daftar Locations");
+
+        sheet.columns = [
+            { header: "ID", key: "id", width: 10 },
+            { header: "Nama Location", key: "name", width: 25 },
+            { header: "Description", key: "description", width: 35 },
+            { header: "Total Items", key: "items", width: 20 },
+            { header: "Created At", key: "createdAt", width: 25 },
+        ];
+
+        locations.forEach(location => {
+            sheet.addRow({
+                id: location.id,
+                name: location.name,
+                description: location.description,
+                items: location.items.length,
+                createdAt: location.createdAt
+            });
+
+        });
+
+        sheet.getRow(1).font = {
+            bold: true
+        };
+
+        res.setHeader(
+            "Content-Type",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        );
+
+        res.setHeader(
+            "Content-Disposition",
+            "attachment; filename=daftar-locations.xlsx"
+        );
+
+        await workbook.xlsx.write(res);
+
+        res.end();
+
+    } catch (error) {
+        return res.status(500).json(response(500, "Server Error", error.message));
+    }
 }
+
+   
 }

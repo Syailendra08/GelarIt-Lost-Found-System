@@ -55,7 +55,6 @@ module.exports = {
        
 
 const validate = v.validate(data, schema);
-
         if (validate.length > 0) {
 
             await transaction.rollback();
