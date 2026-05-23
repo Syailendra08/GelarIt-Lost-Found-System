@@ -42,7 +42,7 @@ export const getItemsByUser = async (
 ) => {
 
 
-    const token = localStorage.getItem("token");
+    const token = getToken();
     const query = new URLSearchParams({
         page,
         limit,

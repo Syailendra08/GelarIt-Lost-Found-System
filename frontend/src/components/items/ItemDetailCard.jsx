@@ -1,6 +1,6 @@
 import { ArrowLeft, MapPin } from "lucide-react";
 import StatusBadge from "../StatusBadge";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function ItemDetailCard({ item }) {
     const Navigate = useNavigate();
@@ -14,7 +14,7 @@ export default function ItemDetailCard({ item }) {
 
             <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-[1.45fr_0.9fr]">
             
-                <div className="relative h-[320px] md:h-[500px]">
+                <div className="relative h-80 md:h-125 rounded-xl">
                     <img
                         src={item?.image}
                         alt={item?.name}
@@ -51,7 +51,7 @@ export default function ItemDetailCard({ item }) {
                             </span>
                         </div>
 
-                        <div className="mt-8 min-h-[140px]">
+                        <div className="mt-8 min-h-35">
                             <h2 className="mb-1 text-sm font-medium text-gray-700">
                                 Description
                             </h2>

@@ -98,7 +98,7 @@ export default function GalleryPage() {
         <div className="mb-8 rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row">
 
-            {/* SEARCH */}
+       
             <div className="relative flex-1">
               <Search
                 size={18}

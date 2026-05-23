@@ -7,16 +7,18 @@ import NavbarComp from "../../components/NavbarComp";
 import ItemDetailCard from "../../components/items/ItemDetailCard";
 
 import { getItemById } from "../../api/item.api";
+import CommentSection from "../../components/dashboard/CommentSection";
 
 export default function ItemDetailPage() {
 
     const navigate = useNavigate();
-
     const { id } = useParams();
-
     const [item, setItem] = useState(null);
-
     const [loading, setLoading] = useState(false);
+
+     const currentUser = JSON.parse(
+        localStorage.getItem("user")
+    );
 
     async function fetchItem() {
 
@@ -49,14 +51,22 @@ export default function ItemDetailPage() {
     }, []);
 
     return (
-        <>
+          <>
             <NavbarComp />
 
-            <ItemDetailCard
-                item={item}
-                loading={loading}
-                onBack={() => navigate(-1)}
-            />
+            
+                <ItemDetailCard
+                    item={item}
+                    loading={loading}
+                    onBack={() => navigate(-1)}
+                />
+
+              <div className="min-h-screen px-4 py-6 md:px-10">
+                <CommentSection
+                    itemId={id}
+                    currentUser={currentUser}
+                />
+            </div>
         </>
     );
 }
