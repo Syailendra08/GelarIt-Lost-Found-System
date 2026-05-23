@@ -4,7 +4,9 @@ const v = new Validator();
 const {
     Comment,
     Item,
-    User
+    Notification,
+    User,
+    sequelize
 } = require("../models");
 
 const { response } = require("../helpers/response.formatter");
@@ -13,16 +15,17 @@ const { Op } = require("sequelize");
 module.exports = {
 
     createComment: async (req, res) => {
+        const transaction = await sequelize.transaction();
         try {
             const { id } = req.params;
             const schema = {
                 comment: { type: "string", min: 1 }
             };
 
-            const item = await Item.findByPk(id);
+            const item = await Item.findByPk(id, { transaction });
 
             if (!item) {
-
+                await transaction.rollback();
                 return res.status(404).json(response(404, "Item not found"));
 
             }
@@ -36,21 +39,37 @@ module.exports = {
             const validate = v.validate(data, schema);
 
             if (validate.length > 0) {
-
+                await transaction.rollback();
                 return res.status(400).json(
                     response(400, "Validation Error", validate)
                 );
 
             }
 
-            const comment = await Comment.create(data);
+            const comment = await Comment.create(data, { transaction });
+
+            if (item.finder_id !== req.user.id) {
+
+                await Notification.create({
+
+                    user_id: item.finder_id,
+                    title: "New Comment",
+                    message: `${req.user.name} commented on your item ${item.name}`
+
+                }, {
+                    transaction
+                });
+
+            }
+
+            await transaction.commit();
 
             return res.status(201).json(
                 response(201, "Create Comment Success", comment)
             );
 
         } catch (error) {
-
+            await transaction.rollback();
             return res.status(500).json(
                 response(500, "Server Error", error.message)
             );
@@ -133,80 +152,83 @@ module.exports = {
     },
 
     updateComment: async (req, res) => {
-
-    try {
-
-        const { id } = req.params;
-        const { comment } = req.body;
-
-        const schema = {
-            comment: { type: "string", min: 1 }
-        };
-
-        const data = {
-            comment: comment
-        };
-
-        const validate = v.validate(data, schema);
-
-        if (validate.length > 0) {
-
-            return res.status(400).json(
-                response(400, "Validation Error", validate)
-            );
-
-        }
-
-        const newComment = await Comment.findByPk(id);
-
-        if (!newComment) {
-
-            return res.status(404).json(
-                response(404, "Comment not found")
-            );
-
-        }
-
-        if (
-            newComment.user_id !== req.user.id &&
-            req.user.role !== "admin"
-        ) {
-
-            return res.status(403).json(
-                response(403, "Forbidden", "Access denied")
-            );
-
-        }
-
-        await Comment.update({
-            comment: comment
-        }, {
-            where: { id: id }
-        });
-
-        return res.status(200).json(
-            response(200, "Update Comment Success", newComment)
-        );
-
-    } catch (error) {
-
-        return res.status(500).json(
-            response(500, "Server Error", error.message)
-        );
-
-    }
-
-},
-
-    deleteComment: async (req, res) => {
+        const transaction = await sequelize.transaction();
 
         try {
 
             const { id } = req.params;
-            const comment = await Comment.findByPk(id);
+            const { comment } = req.body;
+
+            const schema = {
+                comment: { type: "string", min: 1 }
+            };
+
+            const data = {
+                comment: comment
+            };
+
+            const validate = v.validate(data, schema);
+
+            if (validate.length > 0) {
+                await transaction.rollback();
+                return res.status(400).json(
+                    response(400, "Validation Error", validate)
+                );
+
+            }
+
+            const newComment = await Comment.findByPk(id, { transaction });
+
+            if (!newComment) {
+                await transaction.rollback();
+                return res.status(404).json(
+                    response(404, "Comment not found")
+                );
+
+            }
+
+            if (
+                newComment.user_id !== req.user.id &&
+                req.user.role !== "admin"
+            ) {
+                await transaction.rollback();
+                return res.status(403).json(
+                    response(403, "Forbidden", "Access denied")
+                );
+
+            }
+
+            await Comment.update({
+                comment: comment
+            }, {
+                transaction
+            });
+            await transaction.commit();
+            return res.status(200).json(
+                response(200, "Update Comment Success", newComment)
+            );
+
+        } catch (error) {
+
+            await transaction.rollback();
+            return res.status(500).json(
+                response(500, "Server Error", error.message)
+            );
+
+        }
+
+    },
+
+    deleteComment: async (req, res) => {
+        const transaction = await sequelize.transaction();
+
+        try {
+
+            const { id } = req.params;
+            const comment = await Comment.findByPk(id, { transaction });
 
             if (!comment) {
-
+                await transaction.rollback();
                 return res.status(404).json(response(404, "Comment not found"));
 
             }
@@ -214,23 +236,27 @@ module.exports = {
                 comment.user_id !== req.user.id &&
                 req.user.role !== "admin"
             ) {
-
+                await transaction.rollback();
                 return res.status(403).json(
+
                     response(403, "Forbidden", "Access denied")
                 );
 
             }
 
-            const deleteProcess = await Comment.destroy({
-                where: { id, id }
+
+
+            await comment.destroy({
+                transaction
             });
 
+            await transaction.commit();
             return res.status(200).json(
                 response(200, "Delete Comment Success")
             );
 
         } catch (error) {
-
+            await transaction.rollback();
             return res.status(500).json(
                 response(500, "Server Error", error.message)
             );
@@ -242,6 +268,8 @@ module.exports = {
 
     restoreComment: async (req, res) => {
 
+        const transaction = await sequelize.transaction();
+
         try {
 
             const { id } = req.params;
@@ -249,34 +277,41 @@ module.exports = {
             const comment = await Comment.findOne({
 
                 where: { id },
-
-                paranoid: false
+                paranoid: false,
+                transaction
 
             });
 
             if (!comment) {
-                return res.status(404).json(response(404, "Comment not found"));
+
+                await transaction.rollback();
+
+                return res.status(404).json(
+                    response(404, "Comment not found")
+                );
 
             }
 
-            const restoreProcess = await Comment.restore({
-
-                where: { id, id }
+            await Comment.restore({
+                where: { id },
+                transaction
 
             });
 
+            await transaction.commit();
+
             return res.status(200).json(
-                response(200, "Restore Comment Success")
+                response(
+                    200,
+                    "Restore Comment Success"
+                )
             );
 
         } catch (error) {
 
-            return res.status(500).json(
-                response(500, "Server Error", error.message)
-            );
+            await transaction.rollback();
 
+            return res.status(500).json(response(500, "Server Error", error.message));
         }
-
     }
-
 };

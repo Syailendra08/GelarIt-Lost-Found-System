@@ -5,7 +5,8 @@ const {
     sequelize,
     Request,
     Item,
-    User
+    User,
+    Notification
 } = require("../models");
 
 const { response } = require("../helpers/response.formatter");
@@ -13,14 +14,13 @@ const { response } = require("../helpers/response.formatter");
 module.exports = {
 
     createRequest: async (req, res) => {
-
+        const transaction = await sequelize.transaction();
         try {
-
             const schema = {
                 message: { type: "string", min: 3 }
             };
 
-            const item = await Item.findByPk(req.params.id);
+            const item = await Item.findByPk(req.params.id, { transaction });
 
             if (!item) {
                 return res.status(404).json(response(404, "Item not found"));
@@ -36,23 +36,37 @@ module.exports = {
             const validate = v.validate(data, schema);
 
             if (validate.length > 0) {
+
+                await transaction.rollback();
                 return res.status(400).json(response(400, "Validation Error", validate));
             }
 
 
             if (item.finder_id === req.user.id) {
-
+                await transaction.rollback();
                 return res.status(400).json(
                     response(400, "Validation Error", "Finder cannot request their own item")
                 );
-
             }
 
-            const request = await Request.create(data);
+            const request = await Request.create(data, { transaction });
+
+            await Notification.create({
+
+                user_id: item.finder_id,
+                title: "New Request",
+                message: `${req.user.name} requested your item ${item.name}`
+
+            }, {
+                transaction
+            });
+
+            await transaction.commit();
 
             return res.status(201).json(response(201, "Create Request Success", request));
 
         } catch (error) {
+               await transaction.rollback();
             return res.status(500).json(response(500, "Server Error", error.message));
 
         }
@@ -179,9 +193,8 @@ module.exports = {
         const transaction = await sequelize.transaction();
         try {
 
-            const request = await Request.findByPk(req.params.id, {
-                transaction
-            });
+            const request = await Request.findByPk(req.params.id, { transaction }
+            );
 
             if (!request) {
                 await transaction.rollback();
@@ -189,12 +202,9 @@ module.exports = {
 
             }
 
-            const item = await Item.findByPk(request.item_id, {
-                transaction
-            });
+            const item = await Item.findByPk(request.item_id, { transaction });
 
             if (!item) {
-
                 await transaction.rollback();
                 return res.status(404).json(response(404, "Item not found"));
 
@@ -214,9 +224,19 @@ module.exports = {
                 transaction
             });
 
+            await Notification.create({
+                user_id: request.user_id,
+                title: "Request Approved",
+                message: `Your request for ${item.name} has been approved`
+
+            }, {
+                transaction
+            });
+
             await transaction.commit();
 
             return res.status(200).json(response(200, "Approve Request Success"));
+
 
         } catch (error) {
             await transaction.rollback();
@@ -225,21 +245,42 @@ module.exports = {
     },
 
     rejectRequest: async (req, res) => {
+        const transaction = await sequelize.transaction();
 
         try {
 
-            const request = await Request.findByPk(req.params.id);
+            const request = await Request.findByPk(req.params.id, { transaction });
+
             if (!request) {
+                await transaction.rollback();
                 return res.status(404).json(response(404, "Request not found"));
             }
 
+            const item = await Item.findByPk(
+                request.item_id,
+                { transaction }
+            );
+
             await request.update({
                 status: "rejected"
+            }, {
+                transaction
             });
+
+            await Notification.create({
+                user_id: request.user_id,
+                title: "Request Rejected",
+                message: `Your request for ${item.name} has been rejected`
+
+            }, {
+                transaction
+            });
+            await transaction.commit();
 
             return res.status(200).json(response(200, "Reject Request Success"));
 
         } catch (error) {
+               await transaction.rollback();
             return res.status(500).json(response(500, "Server Error", error.message));
         }
     },

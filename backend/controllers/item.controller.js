@@ -184,51 +184,51 @@ module.exports = {
             const dataLimit = Number(limit) || 5;
             const offset = (currentPage - 1) * dataLimit;
 
-           const { count, rows } = await Item.findAndCountAll({
-    offset: offset,
-    limit: dataLimit,
+            const { count, rows } = await Item.findAndCountAll({
+                offset: offset,
+                limit: dataLimit,
 
-    where: whereClause,
+              
 
-    order: sortBy && order ? [
-        [sortBy, order]
-    ] : [],
+                order: sortBy && order ? [
+                    [sortBy, order]
+                ] : [],
 
-    include: [
+                include: [
 
-        {
-            model: Category,
-            as: "category"
-        },
+                    {
+                        model: Category,
+                        as: "category"
+                    },
 
-        {
-            model: Location,
-            as: "location"
-        },
+                    {
+                        model: Location,
+                        as: "location"
+                    },
 
-        {
-            model: User,
-            as: "finder",
-            attributes: {
-                exclude: ["password"]
-            }
-        },
+                    {
+                        model: User,
+                        as: "finder",
+                        attributes: {
+                            exclude: ["password"]
+                        }
+                    },
 
-        {
-            model: User,
-            as: "receiver",
-            attributes: {
-                exclude: ["password"]
-            }
-        },
+                    {
+                        model: User,
+                        as: "receiver",
+                        attributes: {
+                            exclude: ["password"]
+                        }
+                    },
 
-        {
-            model: Request,
-            as: "requests"
-        }
+                    {
+                        model: Request,
+                        as: "requests"
+                    }
 
-    ]
-});
+                ]
+            });
 
             const formatPagination = {
 
