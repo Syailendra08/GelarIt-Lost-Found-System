@@ -285,7 +285,23 @@ module.exports = {
                                 }
                             }
                         ]
-                    }
+                    },
+
+                    {
+                        model: User,
+                        as: "finder",
+                        attributes: {
+                            exclude: ["password"]
+                        }
+                    },
+
+                    {
+                        model: User,
+                        as: "receiver",
+                        attributes: {
+                            exclude: ["password"]
+                        }
+                    },
                 ]
             });
 
