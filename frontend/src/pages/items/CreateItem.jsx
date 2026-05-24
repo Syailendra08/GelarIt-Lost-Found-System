@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import { createItem } from "../../api/item.api";
 import ReportForm from "../../components/items/ReportForm";
-import NavbarComp from "../../components/NavbarComp";
+
 import Swal from "sweetalert2";
 
 export default function CreateItem() {
@@ -48,7 +48,6 @@ export default function CreateItem() {
 
     return (
         <>
-        <NavbarComp />
         
         <ReportForm
             onSubmit={handleCreate}

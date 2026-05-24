@@ -9,22 +9,29 @@ import CreateItem from "../pages/items/CreateItem";
 import EditItem from "../pages/items/EditItem";
 import GalleryPage from "../pages/users/GalleryPage";
 import ItemDetailPage from "../pages/users/ItemDetailPage";
+import UserTemplate from "../UserTemplate";
 
 export const router = createBrowserRouter([
-    {path: "/",element: <App />},
-    {path: "/register", element: <RegisterPage />},
-    {path: "/login",element: <LoginPage />},
+    { path: "/", element: <App /> },
+    { path: "/register", element: <RegisterPage /> },
+    { path: "/login", element: <LoginPage /> },
 
-  
+
     {
         element: <ProtectedRoute />,
         children: [
-            {path: "/dashboard", element: <Dashboard />},
-            {path: "/items/create", element: <CreateItem />},
-            {path: "/items/edit/:id", element: <EditItem />},
-            {path: "/gallery-page", element: <GalleryPage />},
-            {path: "/items/:id",element: <ItemDetailPage />
-}
+            {
+                element: <UserTemplate />,
+                children: [
+                    { path: "/dashboard", element: <Dashboard /> },
+                    { path: "/items/create", element: <CreateItem /> },
+                    { path: "/items/edit/:id", element: <EditItem /> },
+                    { path: "/gallery-page", element: <GalleryPage /> },
+                    {path: "/items/:id", element: <ItemDetailPage /> }
+
+                ]
+            }
+
         ]
     }
 ]);

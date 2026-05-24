@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {updateItem,getItemById} from "../../api/item.api";
 
 import ReportForm from "../../components/items/ReportForm";
-import NavbarComp from "../../components/NavbarComp";
+
 
 import Swal from "sweetalert2";
 
@@ -71,8 +71,6 @@ export default function EditItem() {
 
     return (
         <>
-            <NavbarComp />
-
             <ReportForm
                 initialData={item}
                 onSubmit={handleUpdate}

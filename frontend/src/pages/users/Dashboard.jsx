@@ -4,9 +4,9 @@ import WelcomeSection from "../../components/dashboard/WelcomeSection"
 import QuickActions from "../../components/dashboard/QuickActions"
 
 import DashboardReportList from "../../components/dashboard/DashboardReportList"
-import NavbarComp from "../../components/NavbarComp"
 import { getItemsByUser } from "../../api/item.api"
 import { AuthContext } from "../../contexts/AuthContext"
+import NotificationPanel from "../../components/dashboard/NotificationPanel"
 
 
 export default function Dashboard() {
@@ -16,12 +16,12 @@ export default function Dashboard() {
   async function fetchDashboard(userId) {
     try {
 
-     const result = await getItemsByUser(userId);
-    setReports(result.data?.data || []);
+      const result = await getItemsByUser(userId);
+      setReports(result.data?.data || []);
 
-    
 
-      
+
+
 
     } catch (error) {
 
@@ -31,45 +31,44 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-  if (user?.id) {
-    fetchDashboard(user.id);
-  }
-}, [user]);
+    if (user?.id) {
+      fetchDashboard(user.id);
+    }
+  }, [user]);
 
 
-  return (<>
-    <NavbarComp />
+  return (
+    <>
+      <div className="min-h-screen bg-[#f5f5f7] p-6">
 
-    <div className="min-h-screen bg-[#f5f5f7] p-6">
+        <WelcomeSection user={user} />
 
-      <WelcomeSection user={user} />
+        <QuickActions />
 
-      <QuickActions />
+        <div className="grid grid-cols-12 gap-5 mt-8">
 
-      <div className="grid grid-cols-12 gap-5 mt-8">
+          
+          <div className="col-span-12 lg:col-span-8">
 
+            <div className="flex items-center justify-between mb-4">
 
-        <div className="col-span-8">
+              <h1 className="text-3xl font-bold text-blue-950">
+                My Reports
+              </h1>
 
-          <div className="flex items-center justify-between mb-4">
+              <button className="text-sm text-blue-700 hover:underline">
+                See all →
+              </button>
 
-            <h1 className="text-3xl font-bold text-blue-950">
-              My Reports
-            </h1>
-
-            <button className="text-sm text-blue-700 hover:underline">
-              See all →
-            </button>
-
+            </div>
+            <DashboardReportList reports={reports} />
           </div>
 
-          <DashboardReportList reports={reports} />
-
+          <div className="col-span-12 lg:col-span-4">
+            <NotificationPanel />
+          </div>
         </div>
-
-
       </div>
-    </div>
-  </>
+    </>
   )
 }

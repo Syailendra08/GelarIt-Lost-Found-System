@@ -60,14 +60,18 @@ export default function DashboardReportCard({ report }) {
 
         <div className="mt-4 space-y-2 text-sm text-gray-500">
 
-          <p>
-            <CalendarDays /> Reported: {
-              new Date(report.date).toLocaleDateString()
-            }
+          <p className="flex items-center gap-2">
+            <CalendarDays size={16} />
+            <span>
+              Reported: {new Date(report.date).toLocaleDateString()}
+            </span>
           </p>
 
-          <p>
-            <MapPin className="sm" /> Category: {report.category?.name}
+          <p className="flex items-center gap-2">
+            <MapPin size={16} />
+            <span>
+              Last Seen: {report.location?.name}
+            </span>
           </p>
 
         </div>

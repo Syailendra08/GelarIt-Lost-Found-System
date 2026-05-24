@@ -37,6 +37,20 @@ export default function NavbarComp() {
           </NavLink>
 
           <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              `pb-1 border-b-2 transition ${isActive
+                ? "border-blue-700 text-blue-800"
+                : "border-transparent text-gray-500 hover:text-gray-800"
+              }`
+            }
+          >
+            Dashboard
+          </NavLink>
+
+          
+
+          <NavLink
             to="/gallery-page"
             className={({ isActive }) =>
               `pb-1 border-b-2 transition ${isActive
@@ -46,13 +60,6 @@ export default function NavbarComp() {
             }
           >
             Browse Items
-          </NavLink>
-
-          <NavLink
-            to="/how-it-works"
-            className="text-gray-500 transition hover:text-gray-800"
-          >
-            How It Works
           </NavLink>
 
           <NavLink

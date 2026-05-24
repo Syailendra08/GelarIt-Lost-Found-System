@@ -9,7 +9,7 @@ import {
 
 import { getItems } from "../../api/item.api";
 import StatusBadge from "../../components/StatusBadge";
-import NavbarComp from "../../components/NavbarComp";
+
 import { getCategories } from "../../api/categories.api";
 import { getLocations } from "../../api/locations.api";
 import { Link } from "react-router-dom";
@@ -80,7 +80,6 @@ export default function GalleryPage() {
 
   return (
     <>
-      <NavbarComp />
       <div className="min-h-screen bg-[#f6f4f8] px-4 py-8 md:px-10">
 
         <div className="mb-6">

@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import Swal from "sweetalert2";
 
-import NavbarComp from "../../components/NavbarComp";
 import ItemDetailCard from "../../components/items/ItemDetailCard";
 
 import { getItemById } from "../../api/item.api";
@@ -53,7 +52,6 @@ export default function ItemDetailPage() {
 
     return (
         <>
-            <NavbarComp />
 
             <div className="bg-[#f8f8fb]">
 
