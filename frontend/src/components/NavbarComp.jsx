@@ -1,5 +1,5 @@
 import { Button } from "flowbite-react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import ButtonComp from "./ButtonComp";
 import { useContext, useState } from "react";
@@ -24,34 +24,45 @@ export default function NavbarComp() {
         </div>
 
         <div className="hidden items-center gap-7 text-sm font-medium md:flex">
-          <Link
+          <NavLink
             to="/"
-            className="border-b-2 border-blue-700 pb-1 text-blue-800"
+            className={({ isActive }) =>
+              `pb-1 border-b-2 transition ${isActive
+                ? "border-blue-700 text-blue-800"
+                : "border-transparent text-gray-500 hover:text-gray-800"
+              }`
+            }
           >
             Home
-          </Link>
+          </NavLink>
 
-          <Link
+          <NavLink
             to="/gallery-page"
-            className="text-gray-500 transition hover:text-gray-800"
+            className={({ isActive }) =>
+              `pb-1 border-b-2 transition ${isActive
+                ? "border-blue-700 text-blue-800"
+                : "border-transparent text-gray-500 hover:text-gray-800"
+              }`
+            }
           >
             Browse Items
-          </Link>
+          </NavLink>
 
-          <Link
+          <NavLink
             to="/how-it-works"
             className="text-gray-500 transition hover:text-gray-800"
           >
             How It Works
-          </Link>
+          </NavLink>
 
-          <Link
+          <NavLink
             to="/support"
             className="text-gray-500 transition hover:text-gray-800"
           >
             Support
-          </Link>
+          </NavLink>
         </div>
+
 
         <div className="hidden items-center gap-3 md:flex">
           <ButtonComp className="bg-yellow-400 text-black hover:bg-yellow-500">

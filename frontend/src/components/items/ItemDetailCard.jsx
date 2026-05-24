@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function ItemDetailCard({ item }) {
     const Navigate = useNavigate();
     return (
-        <div className="min-h-screen bg-[#ffffff] p-4 md:p-8">
+        <div className="min-h-screen p-4 md:p-8">
             
             <button onClick={() => Navigate(-1)} className="mb-5 flex items-center gap-2 text-sm text-[#5c5470] transition hover:text-black">
                 <ArrowLeft size={16} />
@@ -23,7 +23,7 @@ export default function ItemDetailCard({ item }) {
                 </div>
 
     
-                  <div className="rounded-2xl bg-[#f4f2fc] p-6 shadow-sm md:p-7">
+                  <div className="rounded-2xl bg-[#f2effd] p-6 shadow-sm md:p-7">
                     
                     <div>
                  
@@ -37,12 +37,12 @@ export default function ItemDetailCard({ item }) {
                             </p>
                         </div>
 
-                        {/* TITLE */}
+                       
                         <h1 className="max-w-md text-4xl font-bold leading-tight text-[#111827]">
                             {item?.name}
                         </h1>
 
-                        {/* LOCATION */}
+                        
                         <div className="mt-4 flex items-center gap-2 text-sm text-[#4f46e5]">
                             <MapPin size={15} />
 
@@ -62,8 +62,8 @@ export default function ItemDetailCard({ item }) {
                         </div>
                     </div>
 
-                    {/* BOTTOM */}
-                    <div className="mt-10 border-t border-gray-300 pt-5">
+                 
+                    <div className="mt-2 border-t border-gray-300 pt-5">
                         <div className="grid grid-cols-2 gap-6">
                             
                             {/* DATE */}
@@ -93,6 +93,26 @@ export default function ItemDetailCard({ item }) {
 
                                 <p className="font-medium text-gray-800">
                                     {item?.category?.name || "-"}
+                                </p>
+                            </div>
+
+                            <div>
+                                <p className="mb-1 text-xs uppercase tracking-[0.2em] text-gray-500">
+                                    Finder
+                                </p>
+
+                                <p className="font-medium text-gray-800">
+                                    {item?.finder?.name || "-"}
+                                </p>
+                            </div>
+
+                            <div>
+                                <p className="mb-1 text-xs uppercase tracking-[0.2em] text-gray-500">
+                                    Reciever
+                                </p>
+
+                                <p className="font-medium text-gray-800">
+                                    {item?.receiver?.name || "-"}
                                 </p>
                             </div>
                         </div>

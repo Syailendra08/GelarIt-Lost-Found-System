@@ -8,6 +8,7 @@ import ItemDetailCard from "../../components/items/ItemDetailCard";
 
 import { getItemById } from "../../api/item.api";
 import CommentSection from "../../components/dashboard/CommentSection";
+import RequestForm from "../../components/items/RequestForm";
 
 export default function ItemDetailPage() {
 
@@ -16,7 +17,7 @@ export default function ItemDetailPage() {
     const [item, setItem] = useState(null);
     const [loading, setLoading] = useState(false);
 
-     const currentUser = JSON.parse(
+    const currentUser = JSON.parse(
         localStorage.getItem("user")
     );
 
@@ -51,21 +52,33 @@ export default function ItemDetailPage() {
     }, []);
 
     return (
-          <>
+        <>
             <NavbarComp />
 
-            
+            <div className="bg-[#f8f8fb]">
+
                 <ItemDetailCard
                     item={item}
                     loading={loading}
                     onBack={() => navigate(-1)}
                 />
 
-              <div className="min-h-screen px-4 py-6 md:px-10">
-                <CommentSection
-                    itemId={id}
-                    currentUser={currentUser}
-                />
+                <div className="min-h-screen px-5 py-6 md:px-10">
+
+                    <div className="mx-auto max-w-5xl">
+                        <CommentSection
+                            itemId={id}
+                            currentUser={currentUser}
+                        />
+                    </div>
+
+                    {item?.status === "found" && (
+                        <RequestForm
+                            itemId={id}
+                        />
+                    )}
+                </div>
+
             </div>
         </>
     );
