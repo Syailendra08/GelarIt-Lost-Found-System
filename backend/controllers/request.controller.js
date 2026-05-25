@@ -10,6 +10,7 @@ const {
 } = require("../models");
 
 const { response } = require("../helpers/response.formatter");
+const { where } = require("sequelize");
 
 module.exports = {
 
@@ -66,7 +67,7 @@ module.exports = {
             return res.status(201).json(response(201, "Create Request Success", request));
 
         } catch (error) {
-               await transaction.rollback();
+            await transaction.rollback();
             return res.status(500).json(response(500, "Server Error", error.message));
 
         }
@@ -85,8 +86,16 @@ module.exports = {
             const offset = (currentPage - 1) * dataLimit;
 
             const { count, rows } = await Request.findAndCountAll({
+                where:
+                    req.user.role === "admin"
+                        ? {}
+                        : {
+                            user_id: req.user.id
+                        },
+
                 offset: offset,
                 limit: dataLimit,
+
 
                 order: sortBy && order ? [
                     [sortBy, order]
@@ -280,7 +289,7 @@ module.exports = {
             return res.status(200).json(response(200, "Reject Request Success"));
 
         } catch (error) {
-               await transaction.rollback();
+            await transaction.rollback();
             return res.status(500).json(response(500, "Server Error", error.message));
         }
     },
