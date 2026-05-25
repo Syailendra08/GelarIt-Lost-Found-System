@@ -1,17 +1,23 @@
+
+import AddReportCard from "../AddReportCard"
 import DashboardReportCard from "./DashboardReportCard"
 
-export default function DashboardReportList({ reports }) {
 
+export default function DashboardReportList({ reports, handleDelete, className = "" }) {
+
+  
   return (
-    <div className="grid grid-cols-2 gap-5">
+    <div
+      className={`grid gap-5 ${className}`}
+    >
 
       {reports.map((report) => (
         <DashboardReportCard
           key={report.id}
-          report={report}
+          report={report} handleDelete={handleDelete}
         />
       ))}
-
+    <AddReportCard />
     </div>
   )
 }

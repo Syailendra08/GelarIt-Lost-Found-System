@@ -7,7 +7,7 @@ export default function ReportForm({
     onSubmit,
     loading = false,
     submitText = "",
-    titleText = "",
+    titleText = "Report",
      initialData
 }) {
     const [categories, setCategories] = useState([]);
@@ -157,7 +157,7 @@ export default function ReportForm({
 
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
-          Date Lost
+          Date
         </label>
 
         <input
@@ -225,7 +225,7 @@ export default function ReportForm({
       </div>
     </div>
 
-    {/* DESCRIPTION */}
+  
     
       <label className="block text-sm font-semibold text-gray-700 mb-2">
         Detailed Description
@@ -243,7 +243,7 @@ export default function ReportForm({
 
                 <div className="mt-6">
                     <p className="text-sm font-semibold text-gray-700 mb-2">
-                        Upload Image (Optional)
+                        Upload Image 
                     </p>
 
                     <input

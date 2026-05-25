@@ -1,9 +1,9 @@
-import { CalendarDays, MapPin } from "lucide-react"
+import { CalendarDays, MapPin, Trash2 } from "lucide-react"
 import { Link } from "react-router-dom"
 import StatusBadge from "../StatusBadge"
 import { motion } from "framer-motion"
 
-export default function DashboardReportCard({ report }) {
+export default function DashboardReportCard({ report, handleDelete   }) {
 
   if (!report) return null
 
@@ -16,6 +16,8 @@ export default function DashboardReportCard({ report }) {
       : report.status === "taken"
         ? "Already Taken"
         : "Edit Report"
+
+        
 
   return (
     <motion.div
@@ -55,6 +57,13 @@ export default function DashboardReportCard({ report }) {
             </p>
 
           </div>
+
+          <button
+            onClick={() => handleDelete(report.id)}
+            className="p-2 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 transition"
+          >
+            <Trash2 size={18} />
+          </button>
 
         </div>
 

@@ -1,8 +1,13 @@
+import axios from "axios";
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL =
+  "http://localhost:3000";
 
-const getToken = () => {
-  return localStorage.getItem("token");
+const token =
+  localStorage.getItem("token");
+
+const headers = {
+  Authorization: `Bearer ${token}`,
 };
 
 
@@ -11,85 +16,115 @@ export const createRequest = async (
   data
 ) => {
 
-  const formData = new FormData();
-
-  formData.append("message", data.message);
-
-  const response = await fetch(
+  return await axios.post(
     `${BASE_URL}/items/${itemId}/requests`,
+    data,
     {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${getToken()}`
-      },
-      body: formData
+      headers,
     }
   );
 
-  return response.json();
 };
 
+export const getAllRequests =
+  async ({
+    page = 1,
+    limit = 10,
+    sortBy = "",
+    order = "",
+  } = {}) => {
 
-export const getRequestsByItem = async (
-  itemId
-) => {
+    return await axios.get(
+      `${BASE_URL}/requests`,
+      {
+        params: {
+          page,
+          limit,
+          sortBy,
+          order,
+        },
 
-  const response = await fetch(
-    `${BASE_URL}/items/${itemId}/requests`,
-    {
-      headers: {
-        Authorization: `Bearer ${getToken()}`
+        headers,
       }
-    }
-  );
+    );
 
-  return response.json();
-};
+  };
 
 
-export const approveRequest = async (id) => {
+export const getRequestById =
+  async (id) => {
 
-  const response = await fetch(
-    `${BASE_URL}/requests/${id}/approve`,
-    {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${getToken()}`
+    return await axios.get(
+      `${BASE_URL}/requests/${id}`,
+      {
+        headers,
       }
-    }
-  );
+    );
 
-  return response.json();
-};
+  };
 
 
-export const rejectRequest = async (id) => {
+export const getRequestsByItem =
+  async (itemId) => {
 
-  const response = await fetch(
-    `${BASE_URL}/requests/${id}/reject`,
-    {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${getToken()}`
+    return await axios.get(
+      `${BASE_URL}/items/${itemId}/requests`,
+      {
+        headers,
       }
-    }
-  );
+    );
 
-  return response.json();
-};
+  };
 
 
-export const deleteRequest = async (id) => {
+export const approveRequest =
+  async (id) => {
 
-  const response = await fetch(
-    `${BASE_URL}/requests/${id}`,
-    {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${getToken()}`
+    return await axios.put(
+      `${BASE_URL}/requests/${id}/approve`,
+      {},
+      {
+        headers,
       }
-    }
-  );
+    );
 
-  return response.json();
-};
+  };
+
+
+export const rejectRequest =
+  async (id) => {
+
+    return await axios.patch(
+      `${BASE_URL}/requests/${id}/reject`,
+      {},
+      {
+        headers,
+      }
+    );
+
+  };
+
+export const markAsTaken =
+  async (id) => {
+
+    return await axios.patch(
+      `${BASE_URL}/requests/${id}/taken`,
+      {},
+      {
+        headers,
+      }
+    );
+
+  };
+
+export const deleteRequest =
+  async (id) => {
+
+    return await axios.delete(
+      `${BASE_URL}/requests/${id}`,
+      {
+        headers,
+      }
+    );
+
+  };

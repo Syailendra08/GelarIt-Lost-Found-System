@@ -32,7 +32,7 @@ export default function QuickActions() {
 
       </div>
       </Link>
-
+      <Link to="my-claims">
       <div className="bg-[#e5e7eb] rounded-2xl h-36 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition">
 
         <div className="w-11 h-11 rounded-full bg-gray-200 flex items-center justify-center mb-4">
@@ -44,6 +44,7 @@ export default function QuickActions() {
         </h1>
 
       </div>
+      </Link>
 
     </div>
   )

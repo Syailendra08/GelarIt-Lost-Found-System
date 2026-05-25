@@ -52,32 +52,30 @@ export default function ItemDetailPage() {
 
     return (
         <>
+<div className="bg-[#f8f8fb]">
+    <ItemDetailCard
+        item={item}
+        loading={loading}
+        onBack={() => navigate(-1)}
+    />
 
-            <div className="bg-[#f8f8fb]">
+    <div className="min-h-screen px-5 py-6 md:px-10 space">
 
-                <ItemDetailCard
-                    item={item}
-                    loading={loading}
-                    onBack={() => navigate(-1)}
+        <div className="mx-auto max-w-5xl  space-y-6">
+            <CommentSection
+                itemId={id}
+                currentUser={currentUser}
+            />
+
+            {item?.status === "found" && (
+                <RequestForm
+                    itemId={id}
                 />
+            )}
+        </div>
 
-                <div className="min-h-screen px-5 py-6 md:px-10">
-
-                    <div className="mx-auto max-w-5xl">
-                        <CommentSection
-                            itemId={id}
-                            currentUser={currentUser}
-                        />
-                    </div>
-
-                    {item?.status === "found" && (
-                        <RequestForm
-                            itemId={id}
-                        />
-                    )}
-                </div>
-
-            </div>
+    </div>
+</div>
         </>
     );
 }

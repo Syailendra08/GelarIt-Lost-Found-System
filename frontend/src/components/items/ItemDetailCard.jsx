@@ -49,6 +49,11 @@ export default function ItemDetailCard({ item }) {
                             <span>
                                 {item?.location?.name || "Unknown Location"}
                             </span>
+                            <MapPin size={15} />
+
+                            <span>
+                                {item?.color || "Unknown Location"}
+                            </span>
                         </div>
 
                         <div className="mt-8 min-h-35">
@@ -66,7 +71,7 @@ export default function ItemDetailCard({ item }) {
                     <div className="mt-2 border-t border-gray-300 pt-5">
                         <div className="grid grid-cols-2 gap-6">
                             
-                            {/* DATE */}
+                       
                             <div>
                                 <p className="mb-1 text-xs uppercase tracking-[0.2em] text-gray-500">
                                     Date Found

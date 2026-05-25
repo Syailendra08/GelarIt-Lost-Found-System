@@ -45,14 +45,13 @@ export default function AuthProvider({ children }) {
     setIsLogin(false);
   }
 
+   const isAdmin =
+    user?.role === "admin";
+
+
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        isLogin,
-        login,
-        logout
-      }}
+      value={{user, isLogin, isAdmin, login, logout }}
     >
       {children}
     </AuthContext.Provider>

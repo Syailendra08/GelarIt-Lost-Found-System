@@ -34,7 +34,7 @@ export const getItemsByUser = async (
     userId,
     {
         page = 1,
-        limit = 5,
+        limit = "",
         name = "",
         sortBy = "",
         order = ""
@@ -112,6 +112,21 @@ export const updateItem = async (id, data) => {
             Authorization: `Bearer ${token}`
         },
         body: formData
+    });
+
+    return response.json();
+};
+
+
+export const deleteItem = async (id) => {
+
+    const token = getToken();
+
+    const response = await fetch(`${BASE_URL}/${id}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
     });
 
     return response.json();
