@@ -62,7 +62,11 @@ export default function LoginPage() {
         showConfirmButton: false,
       });
 
+     if (result.data.role === "admin") {
+      navigate("/admin/dashboard");
+    } else {
       navigate("/dashboard");
+    }
 
     } catch (error) {
 

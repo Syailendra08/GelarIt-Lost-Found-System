@@ -12,6 +12,8 @@ import ItemDetailPage from "../pages/users/ItemDetailPage";
 import UserTemplate from "../UserTemplate";
 import MyReport from "../pages/users/MyReport";
 import MyClaim from "../pages/users/MyClaim";
+import AdminTemplate from "../AdminTemplate";
+import AdminDashboard from "../pages/Admin/AdminDashboard";
 
 export const router = createBrowserRouter([
     { path: "/", element: <App /> },
@@ -36,6 +38,18 @@ export const router = createBrowserRouter([
                 ]
             }
 
+        ]
+    },
+
+    {
+        element: <ProtectedRoute adminOnly={true} />,
+        children: [
+            {
+                element: <AdminTemplate />,
+                children: [
+                    {path: "/admin/dashboard", element: <AdminDashboard />}
+                ]
+            }
         ]
     }
 ]);

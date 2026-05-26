@@ -29,7 +29,7 @@ export default function AdminSidebar() {
                 </h1>
 
                 <p className="mt-1 text-sm leading-relaxed text-gray-500">
-                    School Portal
+                   <span className="text-blue-800 font-bold"> School Portal</span>
                     <br />
                     Lost & Found Admin
                 </p>
@@ -55,7 +55,7 @@ export default function AdminSidebar() {
                     Dashboard
                 </NavLink>
 
-                {/* LOST MANAGEMENT */}
+            
                 <NavLink
                     to="/admin/lost-management"
                     className={({ isActive }) =>
@@ -74,7 +74,6 @@ export default function AdminSidebar() {
                     Lost Management
                 </NavLink>
 
-                {/* FOUND MANAGEMENT */}
                 <NavLink
                     to="/admin/found-management"
                     className={({ isActive }) =>
@@ -93,7 +92,6 @@ export default function AdminSidebar() {
                     Found Management
                 </NavLink>
 
-                {/* REQUEST MANAGEMENT */}
                 <NavLink
                     to="/admin/request-management"
                     className={({ isActive }) =>
@@ -112,7 +110,7 @@ export default function AdminSidebar() {
                     Request Management
                 </NavLink>
 
-                {/* CATEGORY MANAGEMENT */}
+
                 <NavLink
                     to="/admin/category-management"
                     className={({ isActive }) =>
@@ -131,7 +129,7 @@ export default function AdminSidebar() {
                     Category Management
                 </NavLink>
 
-                {/* LOCATION MANAGEMENT */}
+ 
                 <NavLink
                     to="/admin/location-management"
                     className={({ isActive }) =>
@@ -150,7 +148,7 @@ export default function AdminSidebar() {
                     Location Management
                 </NavLink>
 
-                {/* STUDENT DIRECTORY */}
+     
                 <NavLink
                     to="/admin/students"
                     className={({ isActive }) =>

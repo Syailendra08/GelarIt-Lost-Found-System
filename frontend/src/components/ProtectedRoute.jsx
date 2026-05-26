@@ -9,7 +9,7 @@ import {
   AuthContext
 } from "../contexts/AuthContext";
 
-export default function ProtectedRoute() {
+export default function ProtectedRoute({adminOnly = false}) {
 
   const {
     isLogin,
@@ -21,7 +21,7 @@ export default function ProtectedRoute() {
     return <Navigate to="/login" replace />;
   }
 
-  if (!isAdmin) {
+  if (adminOnly && !isAdmin) {
     return <Navigate to="/" replace />;
   }
 
