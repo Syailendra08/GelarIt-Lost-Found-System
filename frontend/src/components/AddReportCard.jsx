@@ -8,23 +8,10 @@ export default function AddReportCard() {
     return (
         <button
             onClick={() => navigate("/items/create")}
-            className="
-        flex min-h-[320px] w-full flex-col
-        items-center justify-center
-        rounded-2xl border-2 border-dashed
-        border-gray-300 bg-[#f8f8fb]
-        p-6 text-center transition
-        hover:border-[#00288E]
-        hover:bg-white
-      "
-        >
+            className="flex min-h-80 w-full flex-col items-center justify-center  rounded-2xl border-2 border-dashed  border-gray-300 bg-[#f8f8fb] p-6 text-center transition  hover:border-[#00288E] hover:bg-white">
 
-            {/* ICON */}
-            <div className="
-        mb-6 flex h-16 w-16
-        items-center justify-center
-        rounded-full bg-[#E5EAFE]
-      ">
+           
+            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#E5EAFE]">
                 <Plus
                     size={32}
                     className="text-[#00288E]"

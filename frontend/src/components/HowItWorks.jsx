@@ -32,23 +32,13 @@ export default function HowItWorks() {
 
     return (
         <section className="py-24 px-10">
-
             
             <h1 className="text-4xl font-bold text-center text-blue-900 mb-16">
                 How it Works
             </h1>
 
-          
-            <div className="
-        grid
-        grid-cols-1
-        md:grid-cols-2
-        lg:grid-cols-3
-        gap-8
-        max-w-7xl
-        mx-auto
-      ">
 
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
                 {steps.map((step, index) => (
                     <motion.div
                         key={index}
@@ -75,7 +65,7 @@ export default function HowItWorks() {
                         className="bg-[#f4f1f7] rounded-3xl p-10 text-center shadow-sm hover:shadow-md transition"
                     >
 
-                    
+
                         <div className="w-16 h-16 mx-auto rounded-full bg-[#dfe1ff] flex items-center justify-center text-blue-800 mb-6  ">
                             {step.icon}
                         </div>

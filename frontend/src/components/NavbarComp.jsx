@@ -48,7 +48,7 @@ export default function NavbarComp() {
             Dashboard
           </NavLink>
 
-          
+
 
           <NavLink
             to="/gallery-page"
