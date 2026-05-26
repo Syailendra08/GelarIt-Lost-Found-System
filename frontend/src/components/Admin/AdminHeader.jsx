@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { matchPath, useLocation } from "react-router-dom";
 
 export default function AdminHeader() {
 
@@ -12,11 +12,16 @@ export default function AdminHeader() {
     "/admin/request-management": "Request Management",
     "/admin/category-management": "Category Management",
     "/admin/location-management": "Location Management",
+    "/admin/categories/create": "Create Category",
+    "/admin/categories/edit/:id": "Edit Category",
     "/admin/students": "Student Directory",
     "/admin/settings": "Settings",
   };
 
-  const currentTitle = titles[location.pathname] || "Admin Panel";
+  const currentTitle =
+  Object.entries(titles).find(([path]) =>
+    matchPath(path, location.pathname)
+  )?.[1] || "Admin Panel";
 
   return (
     <header className="flex items-center justify-between border-b border-gray-200 bg-[#F7F8FC] px-8 py-4">

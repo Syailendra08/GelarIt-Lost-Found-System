@@ -81,11 +81,11 @@ export default function DashboardStats() {
   
             <div>
 
-              <p className="text-[10px] font-semibold tracking-[0.15em] text-gray-500">
+              <p className="text-[11px] font-semibold tracking-[0.15em] text-gray-500">
                 {item.title}
               </p>
 
-              <h2 className="mt-2 text-4xl font-medium tracking-tight text-[#0F172A]">
+              <h2 className="mt-2 text-4xl font-semibold tracking-tight text-[#0F172A]">
                 {item.value}
               </h2>
 

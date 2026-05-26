@@ -1,4 +1,4 @@
-import { Trash2, Download, ChevronLeft, ChevronRight, Pencil, } from "lucide-react";
+import { Trash2, Download, ChevronLeft, ChevronRight, Pencil, Plus, } from "lucide-react";
 
 export default function TableCRUD({
     title = "Inventory",
@@ -6,6 +6,7 @@ export default function TableCRUD({
     rows = [],
     onTrash,
     onExport,
+    onCreate,
     onEdit,
     onDelete,
     pagination,
@@ -59,11 +60,17 @@ export default function TableCRUD({
 
                     <button
                         onClick={onExport}
-                        className="flex items-center gap-2 rounded-xl bg-[#00288E] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#001f70]"
-                    >
+                        className="flex items-center gap-2 rounded-xl bg-[#00288E] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#001f70]">
 
                         <Download size={16} />
                         Export
+                    </button>
+                    <button
+                        onClick={onCreate}
+                        className="flex items-center gap-2 rounded-xl bg-[#00288E] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#001f70]">
+
+                       <Plus size={16} />
+                        Add New
                     </button>
                 </div>
             </div>
@@ -159,9 +166,7 @@ export default function TableCRUD({
                     >
 
                         <ChevronLeft size={16} />
-
                     </button>
-
                     {Array.from(
                         { length: pagination.totalPage || 1 },
                         (_, index) => (
