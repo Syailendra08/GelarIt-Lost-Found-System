@@ -14,6 +14,10 @@ export default function AdminHeader() {
     "/admin/location-management": "Location Management",
     "/admin/categories/create": "Create Category",
     "/admin/categories/edit/:id": "Edit Category",
+    "/admin/categories/trash": "Trash Category",
+    "/admin/locations/create": "Create Location",
+    "/admin/locations/edit/:id": "Edit Location",
+    "/admin/locations/trash": "Trash Location",
     "/admin/students": "Student Directory",
     "/admin/settings": "Settings",
   };
