@@ -63,6 +63,7 @@ module.exports = {
             const { count, rows } = await Location.findAndCountAll({
                 offset: offset,
                 limit: dataLimit,
+                distinct: true,
 
                 where: name ? {
                     name: {
@@ -85,10 +86,10 @@ module.exports = {
             const formatPagination = {
                 data: rows,
                 limit: dataLimit,
-                rows: (offset + 1) + "-" + (offset + rows.length),
+                rangeData: (offset + 1) + "-" + (offset + rows.length),
+                currentPage: currentPage,
+                totalPage: Math.ceil(count / dataLimit),
                 total: count,
-                page: currentPage,
-                totalPage: Math.ceil(count / dataLimit)
             };
 
             return res.status(200).json(response(200, "success get locations", formatPagination));

@@ -110,6 +110,7 @@ module.exports = {
             }
 
             const { count, rows } = await Item.findAndCountAll({
+                distinct: true,
                 offset: offset,
                 limit: dataLimit,
                 where: whereClause,

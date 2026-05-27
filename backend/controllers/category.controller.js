@@ -40,6 +40,7 @@ module.exports = {
             const { count, rows } = await Category.findAndCountAll({
                 offset: offset,
                 limit: dataLimit,
+                distinct: true,
 
                 where: name ? {
                     name: {

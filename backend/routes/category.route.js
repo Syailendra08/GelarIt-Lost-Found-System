@@ -16,7 +16,6 @@ router.get("/export", checkAdmin, categoryController.exportCategories);
 router.get("/:id", categoryController.showCategory);
 router.put("/:id", upload.none(), checkAdmin, categoryController.updateCategory);
 router.delete("/:id", checkAdmin,  categoryController.deleteCategory)
-router.patch("/restore/:id", checkAdmin,  categoryController.restoreCategory);
 router.patch("/trash/restore/:id", checkAdmin, categoryController.restoreCategory);
 router.delete("/trash/force-delete/:id", checkAdmin, categoryController.forceDeleteCategory);
 
