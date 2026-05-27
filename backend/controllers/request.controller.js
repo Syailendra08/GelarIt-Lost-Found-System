@@ -295,22 +295,51 @@ module.exports = {
     },
 
     markAsTaken: async (req, res) => {
-        try {
+    const transaction = await sequelize.transaction();
+    try {
+        const item = await Item.findByPk(req.params.id, { transaction });
 
-            const item = await Item.findByPk(req.params.id);
-
-            if (!item) {
-                return res.status(404).json(response(404, "Item not found"));
-            }
-
-            await item.update({ status: "taken" });
-
-            return res.status(200).json(response(200, "Item marked as taken"));
-
-        } catch (error) {
-            return res.status(500).json(response(500, "Server Error", error.message));
+        if (!item) {
+            await transaction.rollback();
+            return res.status(404).json(response(404, "Item not found"));
         }
-    },
+
+        if (item.status !== "claimed") {
+            await transaction.rollback();
+            return res.status(400).json(
+                response(400, "Item must be claimed first")
+            );
+        }
+
+        
+        await item.update(
+            { status: "taken" },
+            { transaction }
+        );
+
+   
+        await Request.update(
+            { status: "completed" },
+            {
+                where: { item_id: item.id },
+                transaction
+            }
+        );
+
+        await transaction.commit();
+
+        return res.status(200).json(
+            response(200, "Item marked as taken & request completed")
+        );
+
+    } catch (error) {
+        await transaction.rollback();
+
+        return res.status(500).json(
+            response(500, "Server Error", error.message)
+        );
+    }
+},
 
     deleteRequest: async (req, res) => {
 
