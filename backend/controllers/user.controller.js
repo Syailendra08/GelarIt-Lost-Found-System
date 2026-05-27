@@ -63,6 +63,7 @@ module.exports = {
             const { count, rows } = await User.findAndCountAll({
                 offset: offset,
                 limit: dataLimit,
+                distinct: true,
                 where: {
                     ...(name && {
                         name: {
