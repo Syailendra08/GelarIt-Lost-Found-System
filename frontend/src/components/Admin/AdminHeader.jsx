@@ -14,11 +14,14 @@ export default function AdminHeader() {
     "/admin/location-management": "Location Management",
     "/admin/categories/create": "Create Category",
     "/admin/categories/edit/:id": "Edit Category",
-    "/admin/categories/trash": "Trash Category",
+    "/admin/categories/trash": "Category Trash",
     "/admin/locations/create": "Create Location",
     "/admin/locations/edit/:id": "Edit Location",
-    "/admin/locations/trash": "Trash Location",
-    "/admin/students": "Student Directory",
+    "/admin/locations/trash": "Location Trash",
+    "/admin/users": "User Directory",
+    "/admin/users/create": "Create User",
+    "/admin/users/edit/:id": "Edit User",
+    "/admin/users/trash": "User Trash",
     "/admin/settings": "Settings",
   };
 

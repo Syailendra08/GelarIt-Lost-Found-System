@@ -78,8 +78,10 @@ export default function EditCategory() {
 
   useEffect(() => {
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchCategory();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function validateForm() {

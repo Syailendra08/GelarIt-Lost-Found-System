@@ -23,6 +23,10 @@ import LocationManagement from "../pages/Admin/Location/LocationManagement";
 import CreateLocation from "../pages/Admin/Location/CreateLocation";
 import EditLocation from "../pages/Admin/Location/EditLocation";
 import TrashLocation from "../pages/Admin/Location/TrashLocation";
+import UserManagement from "../pages/Admin/User/UserManagement";
+import CreateUser from "../pages/Admin/User/CreateUser";
+import EditUser from "../pages/Admin/User/EditUser";
+import TrashUser from "../pages/Admin/User/TrashUser";
 
 export const router = createBrowserRouter([
     { path: "/", element: <App /> },
@@ -64,7 +68,11 @@ export const router = createBrowserRouter([
                     {path: "/admin/location-management", element: <LocationManagement />},
                     {path: "/admin/locations/create", element: <CreateLocation />},
                     {path: "/admin/locations/edit/:id", element: <EditLocation />},
-                    {path: "/admin/locations/trash", element: <TrashLocation />}
+                    {path: "/admin/locations/trash", element: <TrashLocation />},
+                    {path: "/admin/users", element: <UserManagement />},
+                    {path: "/admin/users/create", element: <CreateUser />},
+                    {path: "/admin/users/edit/:id", element: <EditUser />},
+                    {path: "/admin/users/trash", element: <TrashUser />},
                 ]
             }
         ]

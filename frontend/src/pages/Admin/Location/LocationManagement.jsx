@@ -60,7 +60,9 @@ export default function LocationManagement() {
     }
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchLocations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page]);
 
     async function handleDelete(row) {
@@ -136,7 +138,7 @@ export default function LocationManagement() {
 
     const rows = locations.map(
         (item, index) => ({
-            no: `LOC-${String(index + 1).padStart(3, "0")}`,
+            no: `LOC-${String((page - 1) * 10 + index + 1).padStart(3, "0")}`,
             id: item.id,
             name: item.name,
             description:

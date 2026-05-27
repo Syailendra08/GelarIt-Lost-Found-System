@@ -150,7 +150,7 @@ export default function AdminSidebar() {
 
      
                 <NavLink
-                    to="/admin/students"
+                    to="/admin/users"
                     className={({ isActive }) =>
                         `group flex items-center gap-4 rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-200 ${isActive
                             ? "bg-[#F4C400] text-[#1E293B] shadow-sm"

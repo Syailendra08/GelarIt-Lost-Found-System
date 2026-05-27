@@ -2,16 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import TableCRUD from "../../../components/admin/TableCRUD";
+import { deleteUser, exportUsers, getUsers } from "../../../api/user.api";
 
-import {
-    deleteCategory,
-    exportCategories,
-    getCategories,
-} from "../../../api/categories.api";
-
-export default function CategoryManagement() {
+export default function UserManagement() {
     const navigate = useNavigate();
-    const [categories, setCategories] = useState([]);
+    const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [pagination, setPagination] = useState({
@@ -20,18 +15,18 @@ export default function CategoryManagement() {
         rangeData: "0-0",
     });
 
-    async function fetchCategories() {
+    async function fetchUsers() {
         try {
             setLoading(true);
 
-            const result = await getCategories({
+            const result = await getUsers({
                 page,
-                limit: 10,
+                limit: 6,
                 sortBy: "createdAt",
                 order: "ASC",
             });
 
-            setCategories(result.data?.data || []);
+            setUsers(result.data?.data || []);
 
             setPagination({
                 total: result.data?.total || 0,
@@ -43,7 +38,7 @@ export default function CategoryManagement() {
 
             Swal.fire({
                 icon: "error",
-                title: "Failed fetch categories",
+                title: "Failed fetch users",
             });
         } finally {
             setLoading(false);
@@ -52,13 +47,13 @@ export default function CategoryManagement() {
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        fetchCategories();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        fetchUsers();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page]);
 
     async function handleDelete(row) {
         const confirm = await Swal.fire({
-            title: "Delete this category?",
+            title: "Delete this user?",
             text: row.name,
             icon: "warning",
             showCancelButton: true,
@@ -68,22 +63,22 @@ export default function CategoryManagement() {
         if (!confirm.isConfirmed) return;
 
         try {
-            const result = await deleteCategory(row.id);
+            const result = await deleteUser(row.id);
 
             Swal.fire({
                 icon: "success",
-                title: result.message || "Delete category success",
+                title: result.message || "Delete user success",
                 timer: 1500,
                 showConfirmButton: false,
             });
 
-            fetchCategories();
+            fetchUsers();
         } catch (error) {
             console.log(error);
 
             Swal.fire({
                 icon: "error",
-                title: "Failed delete category",
+                title: "Failed delete user",
             });
         }
     }
@@ -96,12 +91,26 @@ export default function CategoryManagement() {
 
         {
             key: "name",
-            label: "Category Name",
+            label: "User Name",
         },
 
         {
-            key: "description",
-            label: "Description",
+            key: "email",
+            label: "Email",
+        },
+
+        {
+            key: "role",
+            label: "Role",
+        },
+        {
+            key: "reportedTotal",
+            label: "Report Items",
+        },
+
+        {
+            key: "receivedTotal",
+            label: "Received Items",
         },
 
         {
@@ -110,30 +119,33 @@ export default function CategoryManagement() {
         },
     ];
 
-    const rows = categories.map((item, index) => ({
-        no: `CAT-${String((page - 1) * 10 + index + 1).padStart(3, "0")}`,
+    const rows = users.map((item, index) => ({
+        no: `USR-${String((page - 1) * 6 + index + 1).padStart(3, "0")}`,
         id: item.id,
         name: item.name,
-        description: item.description || "-",
+        email: item.email,
+        role: item.role,
+        reportedTotal: item.foundItems.length,
+        receivedTotal: item.receivedItems.length,
         createdAt: new Date(item.createdAt).toLocaleDateString(),
     }));
 
     return (
         <div className="p-6">
             <TableCRUD
-                title="Categories List"
+                title="Users List"
                 columns={columns}
                 rows={rows}
                 loading={loading}
                 page={page}
                 setPage={setPage}
                 pagination={pagination}
-                onEdit={(row) => navigate(`/admin/categories/edit/${row.id}`)}
-                onCreate={() => navigate("/admin/categories/create")}
+                onEdit={(row) => navigate(`/admin/users/edit/${row.id}`)}
+                onCreate={() => navigate("/admin/users/create")}
                 onDelete={handleDelete}
-                onTrash={() => navigate("/admin/categories/trash")}
+                onTrash={() => navigate("/admin/users/trash")}
                 onExport={async () => {
-                    await exportCategories();
+                    await exportUsers();
                 }}
             />
         </div>

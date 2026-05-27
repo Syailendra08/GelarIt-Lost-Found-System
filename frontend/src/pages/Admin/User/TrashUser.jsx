@@ -3,10 +3,15 @@ import Swal from "sweetalert2";
 import TrashTable from "../../../components/Admin/TrashTable";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { forceDeleteLocation, getTrashLocations, restoreLocation } from "../../../api/locations.api";
 
-export default function TrashLocation() {
-    const [locations, setLocations] = useState([]);
+import {
+    getTrashUsers,
+    restoreUser,
+    forceDeleteUser,
+} from "../../../api/user.api";
+
+export default function TrashUser() {
+    const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -14,15 +19,15 @@ export default function TrashLocation() {
         try {
             setLoading(true);
 
-            const result = await getTrashLocations();
+            const result = await getTrashUsers();
 
-            setLocations(result.data || []);
+            setUsers(result.data || []);
         } catch (error) {
             console.log(error);
 
             Swal.fire({
                 icon: "error",
-                title: "Failed fetch trash locations",
+                title: "Failed fetch trash users",
             });
         } finally {
             setLoading(false);
@@ -30,14 +35,13 @@ export default function TrashLocation() {
     }
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchTrash();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     async function handleRestore(row) {
-
         const confirm = await Swal.fire({
-            title: "Restore location?",
+            title: "Restore user?",
             text: row.name,
             icon: "question",
             showCancelButton: true,
@@ -47,7 +51,7 @@ export default function TrashLocation() {
         if (!confirm.isConfirmed) return;
 
         try {
-            const result = await restoreLocation(row.id);
+            const result = await restoreUser(row.id);
 
             Swal.fire({
                 icon: "success",
@@ -62,13 +66,12 @@ export default function TrashLocation() {
 
             Swal.fire({
                 icon: "error",
-                title: "Failed restore location",
+                title: "Failed restore user",
             });
         }
     }
 
     async function handleForceDelete(row) {
-
         const confirm = await Swal.fire({
             title: "Permanent delete?",
             text: "This action cannot be undone.",
@@ -80,7 +83,7 @@ export default function TrashLocation() {
         if (!confirm.isConfirmed) return;
 
         try {
-            const result = await forceDeleteLocation(row.id);
+            const result = await forceDeleteUser(row.id);
 
             Swal.fire({
                 icon: "success",
@@ -95,7 +98,7 @@ export default function TrashLocation() {
 
             Swal.fire({
                 icon: "error",
-                title: "Failed delete location",
+                title: "Failed delete user",
             });
         }
     }
@@ -105,39 +108,43 @@ export default function TrashLocation() {
             key: "id",
             label: "ID",
         },
-
         {
             key: "name",
-            label: "Location Name",
+            label: "User Name",
         },
-
         {
-            key: "description",
-            label: "Description",
+            key: "email",
+            label: "Email",
         },
-
+        {
+            key: "role",
+            label: "Role",
+        },
         {
             key: "deletedAt",
             label: "Deleted At",
         },
     ];
 
-    const rows = locations.map((item) => ({
+    const rows = users.map((item) => ({
         id: item.id,
         name: item.name,
-        description: item.description || "-",
-        deletedAt: new Date(item.deletedAt).toLocaleDateString(),
+        email: item.email,
+        role: item.role,
+        deletedAt: item.deletedAt
+            ? new Date(item.deletedAt).toLocaleDateString()
+            : "-",
     }));
 
     return (
         <div className="p-6">
             <div>
                 <button
-                    onClick={() => navigate("/admin/location-management")}
+                    onClick={() => navigate("/admin/users")}
                     className="mb-4 flex items-center gap-2 text-sm font-medium text-gray-500 transition hover:text-[#00288E]"
                 >
                     <ArrowLeft size={16} />
-                    Back to Locations
+                    Back to Users
                 </button>
             </div>
 
@@ -146,17 +153,15 @@ export default function TrashLocation() {
                     System Trash
                 </p>
 
-                <h1 className="mt-1 text-4xl font-bold text-[#0F172A]">
-                    Trash Locations
-                </h1>
+                <h1 className="mt-1 text-4xl font-bold text-[#0F172A]">Trash Users</h1>
 
                 <p className="mt-2 text-sm text-gray-500">
-                    Restore or permanently delete removed locations.
+                    Restore or permanently delete removed users.
                 </p>
             </div>
 
             <TrashTable
-                title="Deleted Locations"
+                title="Deleted Users"
                 columns={columns}
                 rows={rows}
                 loading={loading}

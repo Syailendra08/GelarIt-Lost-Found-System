@@ -1,58 +1,57 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
 import Swal from "sweetalert2";
 
-import { ArrowLeft, MapPinned } from "lucide-react";
+import { ArrowLeft, UserCog } from "lucide-react";
 
-import { getLocations, updateLocation } from "../../../api/locations.api";
+import { getUsers, updateUser } from "../../../api/user.api";
 
-export default function EditLocation() {
+export default function EditUser() {
     const navigate = useNavigate();
     const { id } = useParams();
+
     const [loading, setLoading] = useState(false);
     const [fetchLoading, setFetchLoading] = useState(true);
 
     const [form, setForm] = useState({
         name: "",
-        description: "",
+        email: "",
+        role: "",
     });
 
     const [errors, setErrors] = useState({
         name: "",
-        description: "",
+        email: "",
+        role: "",
     });
 
-    async function fetchLocation() {
+    async function fetchUser() {
         try {
             setFetchLoading(true);
-            const result = await getLocations();
-            const location = result.data?.data?.find(
-                (item) => item.id === Number(id)
-            );
+            const result = await getUsers();
+            const user = result.data.data.find((item) => item.id === Number(id));
 
-            if (!location) {
+            if (!user) {
                 Swal.fire({
                     icon: "error",
-                    title: "Location not found",
+                    title: "User not found",
                 });
 
-                navigate("/admin/location-management");
-
+                navigate("/admin/users");
                 return;
             }
 
             setForm({
-                name: location.name || "",
-
-                description: location.description || "",
+                name: user.name || "",
+                email: user.email || "",
+                role: user.role || "",
             });
         } catch (error) {
             console.log(error);
 
             Swal.fire({
                 icon: "error",
-                title: "Failed fetch location",
+                title: "Failed fetch user",
             });
         } finally {
             setFetchLoading(false);
@@ -60,62 +59,60 @@ export default function EditLocation() {
     }
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        fetchLocation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        fetchUser();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     function validateForm() {
         const newErrors = {
             name: "",
-            description: "",
+            email: "",
+            role: "",
         };
 
         let isValid = true;
 
         if (!form.name.trim()) {
-            newErrors.name = "Location name is required";
-
+            newErrors.name = "User name is required";
             isValid = false;
         }
 
-        if (!form.description.trim()) {
-            newErrors.description = "Description is required";
+        if (!form.email.trim()) {
+            newErrors.email = "Email is required";
+            isValid = false;
+        }
 
+        if (!form.role.trim()) {
+            newErrors.role = "Role is required";
             isValid = false;
         }
 
         setErrors(newErrors);
-
         return isValid;
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
-
         if (!validateForm()) return;
-
         try {
             setLoading(true);
 
-            const result = await updateLocation(id, form);
+            const result = await updateUser(id, form);
 
             Swal.fire({
                 icon: "success",
-                title: result.message || "Update location success",
-
+                title: result.message || "Update user success",
                 timer: 1500,
-
                 showConfirmButton: false,
             });
 
-            navigate("/admin/location-management");
+            navigate("/admin/users");
         } catch (error) {
             console.log(error);
 
             Swal.fire({
                 icon: "error",
-                title: "Failed update location",
+                title: "Failed update user",
             });
         } finally {
             setLoading(false);
@@ -145,11 +142,11 @@ export default function EditLocation() {
             <div className="mb-1 flex items-center justify-between">
                 <div>
                     <button
-                        onClick={() => navigate("/admin/location-management")}
+                        onClick={() => navigate("/admin/users")}
                         className="mb-4 flex items-center gap-2 text-sm font-medium text-gray-500 transition hover:text-[#00288E]"
                     >
                         <ArrowLeft size={16} />
-                        Back to Locations
+                        Back to Users
                     </button>
                 </div>
             </div>
@@ -157,24 +154,25 @@ export default function EditLocation() {
             <div className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm">
                 <div className="mb-8 flex items-center gap-3">
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EEF2FF]">
-                        <MapPinned size={24} className="text-[#00288E]" />
+                        <UserCog size={24} className="text-[#00288E]" />
                     </div>
 
                     <div>
                         <h2 className="text-lg font-semibold text-[#0F172A]">
-                            Update Location
+                            Update User
                         </h2>
 
                         <p className="text-sm text-gray-500">
-                            Edit location information below.
+                            Edit user information below.
                         </p>
                     </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
+    
                     <div>
                         <label className="mb-2 block text-sm font-semibold text-gray-700">
-                            Location Name
+                            User Name
                         </label>
 
                         <input
@@ -182,7 +180,7 @@ export default function EditLocation() {
                             name="name"
                             value={form.name}
                             onChange={handleChange}
-                            placeholder="Example: Warehouse A"
+                            placeholder="Input user name"
                             className={`w-full rounded-2xl border px-4 py-3 text-sm outline-none transition ${errors.name
                                     ? "border-red-500 focus:border-red-500"
                                     : "border-gray-300 focus:border-[#00288E]"
@@ -196,23 +194,47 @@ export default function EditLocation() {
 
                     <div>
                         <label className="mb-2 block text-sm font-semibold text-gray-700">
-                            Description
+                            Email
                         </label>
 
-                        <textarea
-                            rows={5}
-                            name="description"
-                            value={form.description}
+                        <input
+                            type="email"
+                            name="email"
+                            value={form.email}
                             onChange={handleChange}
-                            placeholder="Write location description..."
-                            className={`w-full rounded-2xl border px-4 py-3 text-sm outline-none transition ${errors.description
+                            placeholder="Input user email"
+                            className={`w-full rounded-2xl border px-4 py-3 text-sm outline-none transition ${errors.email
                                     ? "border-red-500 focus:border-red-500"
                                     : "border-gray-300 focus:border-[#00288E]"
                                 }`}
                         />
 
-                        {errors.description && (
-                            <p className="mt-2 text-sm text-red-500">{errors.description}</p>
+                        {errors.email && (
+                            <p className="mt-2 text-sm text-red-500">{errors.email}</p>
+                        )}
+                    </div>
+
+                    <div>
+                        <label className="mb-2 block text-sm font-semibold text-gray-700">
+                            Role
+                        </label>
+
+                        <select
+                            name="role"
+                            value={form.role}
+                            onChange={handleChange}
+                            className={`w-full rounded-2xl border px-4 py-3 text-sm outline-none transition ${errors.role
+                                    ? "border-red-500 focus:border-red-500"
+                                    : "border-gray-300 focus:border-[#00288E]"
+                                }`}
+                        >
+                            <option value="">Select role</option>
+                            <option value="admin">Admin</option>
+                            <option value="student">Student</option>
+                        </select>
+
+                        {errors.role && (
+                            <p className="mt-2 text-sm text-red-500">{errors.role}</p>
                         )}
                     </div>
 
@@ -222,12 +244,12 @@ export default function EditLocation() {
                             disabled={loading}
                             className="rounded-2xl bg-[#00288E] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#001f70] disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            {loading ? "Updating..." : "Update Location"}
+                            {loading ? "Updating..." : "Update User"}
                         </button>
 
                         <button
                             type="button"
-                            onClick={() => navigate("/admin/location-management")}
+                            onClick={() => navigate("/admin/users")}
                             className="rounded-2xl border border-gray-300 bg-red-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-600"
                         >
                             Cancel
