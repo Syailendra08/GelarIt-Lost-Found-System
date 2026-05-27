@@ -1,107 +1,168 @@
-// api/locations.api.js
-
 const BASE_URL = "http://localhost:3000/locations";
 
 const getToken = () => {
   return localStorage.getItem("token");
 };
 
+const defaultHeaders = (isJson = true) => ({
+  ...(isJson && {
+    "Content-Type": "application/json",
+  }),
+
+  Authorization: `Bearer ${getToken()}`,
+});
+
+// ======================
+// GET ALL LOCATIONS
+// ======================
+
 export const getLocations = async ({
   page = 1,
   limit = 5,
   name = "",
   sortBy = "",
-  order = ""
+  order = "",
 } = {}) => {
-
   const query = new URLSearchParams({
     page,
     limit,
     name,
     sortBy,
-    order
+    order,
   });
 
   const response = await fetch(
     `${BASE_URL}?${query.toString()}`,
     {
-      headers: {
-        Authorization: `Bearer ${getToken()}`
-      }
+      method: "GET",
+      headers: defaultHeaders(false),
     }
   );
 
   return response.json();
 };
 
-export const getLocationById = async (id) => {
+// ======================
+// GET LOCATION BY ID
+// ======================
 
+export const getLocationById = async (id) => {
   const response = await fetch(
     `${BASE_URL}/${id}`,
     {
-      headers: {
-        Authorization: `Bearer ${getToken()}`
-      }
+      method: "GET",
+      headers: defaultHeaders(false),
     }
   );
 
   return response.json();
 };
 
-export const createLocation = async (data) => {
+// ======================
+// CREATE LOCATION
+// ======================
 
+export const createLocation = async (data) => {
   const response = await fetch(BASE_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`
-    },
+
+    headers: defaultHeaders(),
+
     body: JSON.stringify({
       name: data.name,
-      description: data.description
-    })
+      description: data.description,
+    }),
   });
 
   return response.json();
 };
+
+// ======================
+// UPDATE LOCATION
+// ======================
 
 export const updateLocation = async (id, data) => {
-
   const response = await fetch(`${BASE_URL}/${id}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`
-    },
+
+    headers: defaultHeaders(),
+
     body: JSON.stringify({
       name: data.name,
-      description: data.description
-    })
+      description: data.description,
+    }),
   });
 
   return response.json();
 };
+
+// ======================
+// SOFT DELETE LOCATION
+// ======================
 
 export const deleteLocation = async (id) => {
-
   const response = await fetch(`${BASE_URL}/${id}`, {
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${getToken()}`
-    }
+
+    headers: defaultHeaders(false),
   });
 
   return response.json();
 };
 
-export const restoreLocation = async (id) => {
+// ======================
+// GET TRASH LOCATIONS
+// ======================
 
-  const response = await fetch(`${BASE_URL}/restore/${id}`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${getToken()}`
-    }
+export const getTrashLocations = async () => {
+  const response = await fetch(`${BASE_URL}/trash`, {
+    method: "GET",
+
+    headers: defaultHeaders(false),
   });
 
   return response.json();
+};
+
+// ======================
+// RESTORE LOCATION
+// ======================
+
+export const restoreLocation = async (id) => {
+  const response = await fetch(
+    `${BASE_URL}/trash/restore/${id}`,
+    {
+      method: "PATCH",
+
+      headers: defaultHeaders(false),
+    }
+  );
+
+  return response.json();
+};
+
+export const forceDeleteLocation = async (id) => {
+  const response = await fetch(
+    `${BASE_URL}/trash/force-delete/${id}`,
+    {
+      method: "DELETE",
+
+      headers: defaultHeaders(false),
+    }
+  );
+
+  return response.json();
+};
+
+export const exportLocations = async () => {
+  const response = await fetch(
+    `${BASE_URL}/export`,
+    {
+      method: "GET",
+
+      headers: defaultHeaders(false),
+    }
+  );
+
+  return response.blob();
 };

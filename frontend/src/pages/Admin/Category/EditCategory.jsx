@@ -1,36 +1,15 @@
-// pages/admin/EditCategory.jsx
-
 import { useEffect, useState } from "react";
-
-import {
-  useNavigate,
-  useParams,
-} from "react-router-dom";
-
+import { useNavigate, useParams, } from "react-router-dom";
 import Swal from "sweetalert2";
+import { ArrowLeft, FolderPen, } from "lucide-react";
 
-import {
-  ArrowLeft,
-  FolderPen,
-} from "lucide-react";
-
-import {
-  getCategories,
-  updateCategory,
-} from "../../../api/categories.api";
+import { getCategories, updateCategory, } from "../../../api/categories.api";
 
 export default function EditCategory() {
-
   const navigate = useNavigate();
-
   const { id } = useParams();
-
-  const [loading, setLoading] =
-    useState(false);
-
-  const [fetchLoading, setFetchLoading] =
-    useState(true);
-
+  const [loading, setLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(true);
   const [form, setForm] =
     useState({
       name: "",
@@ -280,11 +259,10 @@ export default function EditCategory() {
               value={form.name}
               onChange={handleChange}
               placeholder="Example: Electronics"
-              className={`w-full rounded-2xl border px-4 py-3 text-sm outline-none transition ${
-                errors.name
-                  ? "border-red-500 focus:border-red-500"
-                  : "border-gray-300 focus:border-[#00288E]"
-              }`}
+              className={`w-full rounded-2xl border px-4 py-3 text-sm outline-none transition ${errors.name
+                ? "border-red-500 focus:border-red-500"
+                : "border-gray-300 focus:border-[#00288E]"
+                }`}
             />
 
             {errors.name && (
@@ -299,7 +277,7 @@ export default function EditCategory() {
 
           </div>
 
-       
+
           <div>
 
             <label className="mb-2 block text-sm font-semibold text-gray-700">
@@ -314,11 +292,10 @@ export default function EditCategory() {
               value={form.description}
               onChange={handleChange}
               placeholder="Write category description..."
-              className={`w-full rounded-2xl border px-4 py-3 text-sm outline-none transition ${
-                errors.description
-                  ? "border-red-500 focus:border-red-500"
-                  : "border-gray-300 focus:border-[#00288E]"
-              }`}
+              className={`w-full rounded-2xl border px-4 py-3 text-sm outline-none transition ${errors.description
+                ? "border-red-500 focus:border-red-500"
+                : "border-gray-300 focus:border-[#00288E]"
+                }`}
             />
 
             {errors.description && (

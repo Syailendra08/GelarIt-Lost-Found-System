@@ -1,25 +1,15 @@
-// pages/admin/CategoryManagement.jsx
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import Swal from "sweetalert2";
+import TableCRUD from "../../../components/admin/TableCRUD";
 
-import TableCRUD from "../../components/admin/TableCRUD";
-
-import {
-    deleteCategory,
-    getCategories,
-} from "../../api/categories.api";
+import {deleteCategory, exportCategories, getCategories, } from "../../../api/categories.api";
 
 export default function CategoryManagement() {
     const navigate = useNavigate();
-    const [categories, setCategories] =
-        useState([]);
-    const [loading, setLoading] =
-        useState(false);
-    const [page, setPage] =
-        useState(1);
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
     const [pagination, setPagination] =
         useState({
             total: 0,
@@ -28,9 +18,7 @@ export default function CategoryManagement() {
         });
 
     async function fetchCategories() {
-
         try {
-
             setLoading(true);
 
             const result =
@@ -41,17 +29,14 @@ export default function CategoryManagement() {
                     order: "ASC",
                 });
 
-            setCategories(
-                result.data?.data || []
-            );
+            setCategories(result.data?.data || []);
 
             setPagination({
                 total:
                     result.data?.total || 0,
 
                 totalPage:
-                    result.data?.totalPage ||
-                    1,
+                    result.data?.totalPage || 1,
 
                 rangeData:
                     result.data?.rangeData ||
@@ -59,7 +44,6 @@ export default function CategoryManagement() {
             });
 
         } catch (error) {
-
             console.log(error);
 
             Swal.fire({
@@ -69,32 +53,22 @@ export default function CategoryManagement() {
             });
 
         } finally {
-
             setLoading(false);
-
         }
     }
 
     useEffect(() => {
-
         fetchCategories();
-
     }, [page]);
 
     async function handleDelete(row) {
 
         const confirm =
             await Swal.fire({
-
-                title:
-                    "Delete this category?",
-
+                title:"Delete this category?",
                 text: row.name,
-
                 icon: "warning",
-
                 showCancelButton: true,
-
                 confirmButtonColor:
                     "#DC2626",
 
@@ -124,13 +98,11 @@ export default function CategoryManagement() {
             fetchCategories();
 
         } catch (error) {
-
             console.log(error);
 
             Swal.fire({
                 icon: "error",
-                title:
-                    "Failed delete category",
+                title: "Failed delete category",
             });
 
         }
@@ -194,11 +166,11 @@ export default function CategoryManagement() {
                 }
                 onDelete={handleDelete}
                 onTrash={() =>
-                    console.log("trash")
+                    navigate("/admin/categories/trash")
                 }
-                onExport={() =>
-                    console.log("export")
-                }
+                onExport={async () => {
+    await exportCategories();
+                }}
             />
 
         </div>

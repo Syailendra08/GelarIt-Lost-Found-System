@@ -94,12 +94,59 @@ export const deleteCategory = async (id) => {
 
 export const restoreCategory = async (id) => {
 
-  const response = await fetch(`${BASE_URL}/restore/${id}`, {
-    method: "PUT",
+  const response = await fetch(`${BASE_URL}/trash/restore/${id}`, {
+    method: "PATCH",
     headers: {
       Authorization: `Bearer ${getToken()}`
     }
   });
 
   return response.json();
+};
+
+
+export const getTrashCategories = async () => {
+
+  const response = await fetch(`${BASE_URL}/trash`, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`
+    }
+  });
+
+  return response.json();
+};
+
+export const forceDeleteCategory = async (id) => {
+
+  const response = await fetch(`${BASE_URL}/trash/force-delete/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${getToken()}`
+    }
+  });
+
+  return response.json();
+};
+
+export const exportCategories = async () => {
+  const response = await fetch(`${BASE_URL}/export`, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed export categories");
+  }
+
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "daftar-categories.xlsx";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
 };

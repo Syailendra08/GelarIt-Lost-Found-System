@@ -14,9 +14,11 @@ import MyReport from "../pages/users/MyReport";
 import MyClaim from "../pages/users/MyClaim";
 import AdminTemplate from "../AdminTemplate";
 import AdminDashboard from "../pages/Admin/AdminDashboard";
-import CategoryManagement from "../pages/Admin/CategoryManagement";
+
 import CreateCategory from "../pages/Admin/Category/CreateCategory";
 import EditCategory from "../pages/Admin/Category/EditCategory";
+import CategoryManagement from "../pages/Admin/Category/CategoryManagement";
+import TrashCategory from "../pages/Admin/Category/TrashCategory";
 
 export const router = createBrowserRouter([
     { path: "/", element: <App /> },
@@ -53,8 +55,8 @@ export const router = createBrowserRouter([
                     {path: "/admin/dashboard", element: <AdminDashboard />},
                     {path: "/admin/category-management", element: <CategoryManagement />},
                     {path: "/admin/categories/create", element: < CreateCategory />},
-                    {path: "/admin/categories/edit/:id", element: <EditCategory />
-                    }
+                    {path: "/admin/categories/edit/:id", element: <EditCategory />},
+                    {path: "/admin/categories/trash", element: <TrashCategory />}
                 ]
             }
         ]

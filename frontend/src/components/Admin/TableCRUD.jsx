@@ -1,9 +1,11 @@
 import { Trash2, Download, ChevronLeft, ChevronRight, Pencil, Plus, } from "lucide-react";
+import LoadingComp from "../LoadingComp";
 
 export default function TableCRUD({
     title = "Inventory",
     columns = [],
     rows = [],
+    loading = false,
     onTrash,
     onExport,
     onCreate,
@@ -69,7 +71,7 @@ export default function TableCRUD({
                         onClick={onCreate}
                         className="flex items-center gap-2 rounded-xl bg-[#00288E] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#001f70]">
 
-                       <Plus size={16} />
+                        <Plus size={16} />
                         Add New
                     </button>
                 </div>
@@ -100,51 +102,61 @@ export default function TableCRUD({
                         </tr>
                     </thead>
                     <tbody>
-
-                        {rows.map((row, index) => (
-
-                            <tr
-                                key={index}
-                                className="border-t border-gray-100 transition hover:bg-gray-50"
-                            >
-
-                                {columns.map((column) => (
-
-                                    <td
-                                        key={column.key}
-                                        className="px-6 py-5 text-sm text-gray-600"
-                                    >
-
-                                        {column.key === "status"
-                                            ? renderStatus(row[column.key])
-                                            : row[column.key]}
-
-                                    </td>
-                                ))}
-
-                                <td className="px-6 py-5">
-                                    <div className="flex items-center gap-2">
-                                        <button
-                                            onClick={() => onEdit(row)}
-                                            className="flex h-9 w-9 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-blue-700 transition hover:bg-blue-100"
-                                        >
-
-                                            <Pencil size={16} />
-
-                                        </button>
-
-                                        <button
-                                            onClick={() => onDelete(row)}
-                                            className="flex h-9 w-9 items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-600 transition hover:bg-red-100"
-                                        >
-
-                                            <Trash2 size={16} />
-
-                                        </button>
-                                    </div>
+                        {loading ? (
+                            <tr>
+                                <td
+                                    colSpan={columns.length + 1}
+                                    className="px-6 py-10"
+                                >
+                                    <LoadingComp />
                                 </td>
                             </tr>
-                        ))}
+                        ) : rows.length > 0 ? (
+                            rows.map((row, index) => (
+                                <tr
+                                    key={index}
+                                    className="border-t border-gray-100 transition hover:bg-gray-50"
+                                >
+                                    {columns.map((column) => (
+                                        <td
+                                            key={column.key}
+                                            className="px-6 py-5 text-sm text-gray-600"
+                                        >
+                                            {column.key === "status"
+                                                ? renderStatus(row[column.key])
+                                                : row[column.key]}
+                                        </td>
+                                    ))}
+
+                                    <td className="px-6 py-5">
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => onEdit(row)}
+                                                className="flex h-9 w-9 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-blue-700 transition hover:bg-blue-100"
+                                            >
+                                                <Pencil size={16} />
+                                            </button>
+
+                                            <button
+                                                onClick={() => onDelete(row)}
+                                                className="flex h-9 w-9 items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-600 transition hover:bg-red-100"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td
+                                    colSpan={columns.length + 1}
+                                    className="px-6 py-10 text-center text-sm text-gray-400"
+                                >
+                                    No data found
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
