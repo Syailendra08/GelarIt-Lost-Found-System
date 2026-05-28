@@ -31,6 +31,8 @@ import ItemManagement from "../pages/Admin/Item/ItemManagement";
 import CreateItemAdmin from "../pages/Admin/Item/CreateItemAdmin";
 import EditItemAdmin from "../pages/Admin/Item/EditItemAdmin";
 import TrashItem from "../pages/Admin/Item/TrashItem";
+import RequestManagement from "../pages/Admin/Request/RequestManagement";
+import TrashRequest from "../pages/Admin/Request/TrashRequest";
 
 
 export const router = createBrowserRouter([
@@ -85,7 +87,9 @@ export const router = createBrowserRouter([
                     {path: "/admin/item-management", element: <ItemManagement />},
                     {path: "/admin/items/create", element: <CreateItemAdmin />},
                     {path: "/admin/items/edit/:id", element: <EditItemAdmin/>},
-                    {path: "/admin/items/trash", element: <TrashItem />}
+                    {path: "/admin/items/trash", element: <TrashItem />},
+                    {path: "/admin/request-management", element: <RequestManagement />},
+                    {path: "/admin/requests/trash", element: <TrashRequest />},
                     
                 ]
             }

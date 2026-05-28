@@ -5,6 +5,7 @@ import {
     CheckCircle2,
     AlertCircle,
     MessageSquare,
+    X,
 } from "lucide-react";
 import { getNotifications, readAllNotifications, readNotification } from "../../api/notification.api";
 
@@ -59,6 +60,12 @@ export default function NotificationPanel() {
                 return {
                     icon: <CheckCircle2 size={16} />,
                     color: "bg-[#1E40AF] text-white"
+                };
+
+            case "rejected":
+                return {
+                    icon: <X size={16} />,
+                    color: "bg-red-600 text-white"
                 };
 
             default:

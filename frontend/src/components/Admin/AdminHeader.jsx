@@ -23,6 +23,7 @@ export default function AdminHeader() {
     "/admin/items/create": "Create Item",
     "/admin/items/edit/:id": "Edit Item",
     "/admin/items/trash": "Create Item",
+    "/admin/requests/trash": "Request Trash"
 
     
   };
