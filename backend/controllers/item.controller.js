@@ -109,6 +109,12 @@ module.exports = {
                 whereClause.locations_id = req.query.location_id;
             }
 
+            if (req.query.status) {
+                whereClause.status = req.query.status;
+            }
+
+
+
             const { count, rows } = await Item.findAndCountAll({
                 distinct: true,
                 offset: offset,
@@ -189,7 +195,7 @@ module.exports = {
                 offset: offset,
                 limit: dataLimit,
 
-              
+
 
                 order: sortBy && order ? [
                     [sortBy, order]
