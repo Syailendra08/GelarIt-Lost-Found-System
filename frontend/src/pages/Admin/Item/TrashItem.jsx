@@ -1,33 +1,32 @@
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import TrashTable from "../../../components/Admin/TrashTable";
+
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import {
-    getTrashUsers,
-    restoreUser,
-    forceDeleteUser,
-} from "../../../api/user.api";
+import TrashTable from "../../../components/Admin/TrashTable";
 
-export default function TrashUser() {
-    const [users, setUsers] = useState([]);
+import { getTrashItems, restoreItem, forceDeleteItem,} from "../../../api/item.api";
+
+export default function TrashItem() {
+    const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(false);
+
     const navigate = useNavigate();
 
     async function fetchTrash() {
         try {
             setLoading(true);
 
-            const result = await getTrashUsers();
+            const result = await getTrashItems();
 
-            setUsers(result.data || []);
+            setItems(result.data || []);
         } catch (error) {
             console.log(error);
 
             Swal.fire({
                 icon: "error",
-                title: "Failed fetch trash users",
+                title: "Failed fetch trash items",
             });
         } finally {
             setLoading(false);
@@ -42,7 +41,7 @@ export default function TrashUser() {
 
     async function handleRestore(row) {
         const confirm = await Swal.fire({
-            title: "Restore user?",
+            title: "Restore item?",
             text: row.name,
             icon: "question",
             showCancelButton: true,
@@ -52,7 +51,7 @@ export default function TrashUser() {
         if (!confirm.isConfirmed) return;
 
         try {
-            const result = await restoreUser(row.id);
+            const result = await restoreItem(row.id);
 
             Swal.fire({
                 icon: "success",
@@ -67,7 +66,7 @@ export default function TrashUser() {
 
             Swal.fire({
                 icon: "error",
-                title: "Failed restore user",
+                title: "Failed restore item",
             });
         }
     }
@@ -84,7 +83,7 @@ export default function TrashUser() {
         if (!confirm.isConfirmed) return;
 
         try {
-            const result = await forceDeleteUser(row.id);
+            const result = await forceDeleteItem(row.id);
 
             Swal.fire({
                 icon: "success",
@@ -99,53 +98,46 @@ export default function TrashUser() {
 
             Swal.fire({
                 icon: "error",
-                title: "Failed delete user",
+                title: "Failed delete item",
             });
         }
     }
 
     const columns = [
-        {
-            key: "id",
-            label: "ID",
-        },
-        {
-            key: "name",
-            label: "User Name",
-        },
-        {
-            key: "email",
-            label: "Email",
-        },
-        {
-            key: "role",
-            label: "Role",
-        },
-        {
-            key: "deletedAt",
-            label: "Deleted At",
-        },
+        { key: "id", label: "ID", },
+        { key: "name", label: "Name", },
+        { key: "category", label: "Category", },
+        { key: "location", label: "Location", },
+        { key: "status", label: "Status", },
+        { key: "finder", label: "Finder", },
+        { key: "receiver", label: "Receiver", },
+        { key: "deletedAt", label: "Deleted At",  },
     ];
 
-    const rows = users.map((item) => ({
+    const rows = items.map((item, index) => ({
+        no: `ITM-${String(index + 1).padStart(3, "0")}`,
         id: item.id,
         name: item.name,
-        email: item.email,
-        role: item.role,
+        category: item.category?.name || "-",
+        location: item.location?.name || "-",
+        status: item.status || "-",
+        finder: item.finder?.name || "-",
+        receiver: item.receiver?.name || "-",
+
         deletedAt: item.deletedAt
             ? new Date(item.deletedAt).toLocaleDateString()
             : "-",
     }));
 
     return (
-        <div className="p-6">
+        <div>
             <div>
                 <button
-                    onClick={() => navigate("/admin/users")}
+                    onClick={() => navigate("/admin/item-management")}
                     className="mb-4 flex items-center gap-2 text-sm font-medium text-gray-500 transition hover:text-[#00288E]"
                 >
                     <ArrowLeft size={16} />
-                    Back to Users
+                    Back to Items
                 </button>
             </div>
 
@@ -154,15 +146,15 @@ export default function TrashUser() {
                     System Trash
                 </p>
 
-                <h1 className="mt-1 text-4xl font-bold text-[#0F172A]">Trash Users</h1>
+                <h1 className="mt-1 text-4xl font-bold text-[#0F172A]">Trash Items</h1>
 
                 <p className="mt-2 text-sm text-gray-500">
-                    Restore or permanently delete removed users.
+                    Restore or permanently delete removed items.
                 </p>
             </div>
 
             <TrashTable
-                title="Deleted Users"
+                title="Deleted Items"
                 columns={columns}
                 rows={rows}
                 loading={loading}

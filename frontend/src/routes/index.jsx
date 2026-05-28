@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import App from "../App";
 import RegisterPage from "../pages/Register";
 import LoginPage from "../pages/Login";
@@ -27,6 +27,11 @@ import UserManagement from "../pages/Admin/User/UserManagement";
 import CreateUser from "../pages/Admin/User/CreateUser";
 import EditUser from "../pages/Admin/User/EditUser";
 import TrashUser from "../pages/Admin/User/TrashUser";
+import ItemManagement from "../pages/Admin/Item/ItemManagement";
+import CreateItemAdmin from "../pages/Admin/Item/CreateItemAdmin";
+import EditItemAdmin from "../pages/Admin/Item/EditItemAdmin";
+import TrashItem from "../pages/Admin/Item/TrashItem";
+
 
 export const router = createBrowserRouter([
     { path: "/", element: <App /> },
@@ -60,6 +65,10 @@ export const router = createBrowserRouter([
             {
                 element: <AdminTemplate />,
                 children: [
+                    {
+                    path: "/admin",
+                    element: <Navigate to="/admin/dashboard" replace />
+                },
                     {path: "/admin/dashboard", element: <AdminDashboard />},
                     {path: "/admin/category-management", element: <CategoryManagement />},
                     {path: "/admin/categories/create", element: < CreateCategory />},
@@ -73,6 +82,11 @@ export const router = createBrowserRouter([
                     {path: "/admin/users/create", element: <CreateUser />},
                     {path: "/admin/users/edit/:id", element: <EditUser />},
                     {path: "/admin/users/trash", element: <TrashUser />},
+                    {path: "/admin/item-management", element: <ItemManagement />},
+                    {path: "/admin/items/create", element: <CreateItemAdmin />},
+                    {path: "/admin/items/edit/:id", element: <EditItemAdmin/>},
+                    {path: "/admin/items/trash", element: <TrashItem />}
+                    
                 ]
             }
         ]

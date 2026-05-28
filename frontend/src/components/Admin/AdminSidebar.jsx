@@ -1,9 +1,6 @@
-// components/admin/AdminSidebar.jsx
-
 import {
     LayoutDashboard,
     PackageSearch,
-    ClipboardCheck,
     FolderKanban,
     MapPinned,
     Tags,
@@ -57,7 +54,7 @@ export default function AdminSidebar() {
 
             
                 <NavLink
-                    to="/admin/lost-management"
+                    to="/admin/item-management"
                     className={({ isActive }) =>
                         `group flex items-center gap-4 rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-200 ${isActive
                             ? "bg-[#F4C400] text-[#1E293B] shadow-sm"
@@ -71,26 +68,10 @@ export default function AdminSidebar() {
                         <PackageSearch size={18} />
 
                     </div>
-                    Lost Management
+                    Item Management
                 </NavLink>
 
-                <NavLink
-                    to="/admin/found-management"
-                    className={({ isActive }) =>
-                        `group flex items-center gap-4 rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-200 ${isActive
-                            ? "bg-[#F4C400] text-[#1E293B] shadow-sm"
-                            : "text-gray-500 hover:bg-white hover:text-[#00288E] hover:shadow-sm"
-                        }`
-                    }
-                >
-
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm">
-
-                        <ClipboardCheck size={18} />
-
-                    </div>
-                    Found Management
-                </NavLink>
+                
 
                 <NavLink
                     to="/admin/request-management"

@@ -113,27 +113,10 @@ export default function LocationManagement() {
     }
 
     const columns = [
-
-        {
-            key: "no",
-            label: "ID",
-        },
-
-        {
-            key: "name",
-            label: "Location Name",
-        },
-
-        {
-            key: "description",
-            label: "Description",
-        },
-
-        {
-            key: "createdAt",
-            label: "Created At",
-        },
-
+        { key: "no", label: "ID", },
+        { key: "name", label: "Location Name", },
+        { key: "description", label: "Description",},
+        { key: "createdAt", label: "Created At",},
     ];
 
     const rows = locations.map(
@@ -141,14 +124,9 @@ export default function LocationManagement() {
             no: `LOC-${String((page - 1) * 10 + index + 1).padStart(3, "0")}`,
             id: item.id,
             name: item.name,
-            description:
-                item.description || "-",
-            createdAt:
-                new Date(
-                    item.createdAt
-                ).toLocaleDateString(),
-        })
-    );
+            description: item.description || "-",
+            createdAt: new Date(item.createdAt).toLocaleDateString(),
+        }));
 
     return (
         <div className="p-6">

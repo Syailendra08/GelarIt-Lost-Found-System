@@ -7,8 +7,7 @@ export default function AdminHeader() {
 
   const titles = {
     "/admin/dashboard": "Dashboard",
-    "/admin/lost-management": "Lost Management",
-    "/admin/found-management": "Found Management",
+    "/admin/item-management": "Item Management",
     "/admin/request-management": "Request Management",
     "/admin/category-management": "Category Management",
     "/admin/location-management": "Location Management",
@@ -21,8 +20,11 @@ export default function AdminHeader() {
     "/admin/users": "User Directory",
     "/admin/users/create": "Create User",
     "/admin/users/edit/:id": "Edit User",
-    "/admin/users/trash": "User Trash",
-    "/admin/settings": "Settings",
+    "/admin/items/create": "Create Item",
+    "/admin/items/edit/:id": "Edit Item",
+    "/admin/items/trash": "Create Item",
+
+    
   };
 
   const currentTitle =
