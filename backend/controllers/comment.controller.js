@@ -15,38 +15,52 @@ const { Op } = require("sequelize");
 module.exports = {
 
     createComment: async (req, res) => {
+
         const transaction = await sequelize.transaction();
+
         try {
+
             const { id } = req.params;
+
             const schema = {
                 comment: { type: "string", min: 1 }
             };
 
-            const item = await Item.findByPk(id, { transaction });
-
-            if (!item) {
-                await transaction.rollback();
-                return res.status(404).json(response(404, "Item not found"));
-
-            }
-
-            const data = {
-                item_id: Number(id),
-                user_id: req.user.id,
+            const validate = v.validate({
                 comment: req.body.comment
-            };
-
-            const validate = v.validate(data, schema);
+            }, schema);
 
             if (validate.length > 0) {
+
                 await transaction.rollback();
+
                 return res.status(400).json(
                     response(400, "Validation Error", validate)
                 );
 
             }
 
-            const comment = await Comment.create(data, { transaction });
+            const item = await Item.findByPk(id, { transaction });
+
+            if (!item) {
+
+                await transaction.rollback();
+
+                return res.status(404).json(
+                    response(404, "Item not found")
+                );
+
+            }
+
+            const comment = await Comment.create({
+
+                item_id: Number(id),
+                user_id: req.user.id,
+                comment: req.body.comment
+
+            }, {
+                transaction
+            });
 
             if (item.finder_id !== req.user.id) {
 
@@ -54,7 +68,10 @@ module.exports = {
 
                     user_id: item.finder_id,
                     title: "New Comment",
-                    message: `${req.user.name} commented on your item ${item.name}`
+                    message: `${req.user.name} commented on "${item.name}"`,
+                    type: "comment",
+                    item_id: item.id,
+                    is_read: false
 
                 }, {
                     transaction
@@ -69,7 +86,9 @@ module.exports = {
             );
 
         } catch (error) {
+
             await transaction.rollback();
+
             return res.status(500).json(
                 response(500, "Server Error", error.message)
             );
@@ -78,10 +97,10 @@ module.exports = {
 
     },
 
-
     getCommentsByItem: async (req, res) => {
 
         try {
+
             const { id } = req.params;
             const { comment, sortBy, order, page, limit } = req.query;
 
@@ -92,23 +111,28 @@ module.exports = {
             const item = await Item.findByPk(id);
 
             if (!item) {
-                return res.status(404).json(response(404, "Item not found"));
+
+                return res.status(404).json(
+                    response(404, "Item not found")
+                );
 
             }
 
             const { count, rows } = await Comment.findAndCountAll({
 
-                offset: offset,
+                offset,
                 limit: dataLimit,
 
                 where: {
+
                     item_id: id,
 
-                    ...(comment ? {
+                    ...(comment && {
                         comment: {
                             [Op.like]: `%${comment}%`
                         }
-                    } : {})
+                    })
+
                 },
 
                 include: [
@@ -116,7 +140,6 @@ module.exports = {
                     {
                         model: User,
                         as: "user",
-
                         attributes: {
                             exclude: ["password"]
                         }
@@ -124,34 +147,43 @@ module.exports = {
 
                 ],
 
-                order: sortBy && order ? [
-                    [sortBy, order]
-                ] : [
-                    ["createdAt", "DESC"]
-                ]
+                order: sortBy && order
+                    ? [[sortBy, order]]
+                    : [["createdAt", "DESC"]]
 
             });
 
             const formatPagination = {
+
                 data: rows,
                 limit: dataLimit,
-                rows: (offset + 1) + "-" + (offset + rows.length),
+                rows: `${offset + 1}-${offset + rows.length}`,
                 total: count,
                 page: currentPage,
                 totalPage: Math.ceil(count / dataLimit)
+
             };
 
-            return res.status(200).json(response(200, "Success get item comments", formatPagination));
+            return res.status(200).json(
+                response(
+                    200,
+                    "Success get item comments",
+                    formatPagination
+                )
+            );
 
         } catch (error) {
 
-            return res.status(500).json(response(500, "Server Error", error.message));
+            return res.status(500).json(
+                response(500, "Server Error", error.message)
+            );
 
         }
 
     },
 
     updateComment: async (req, res) => {
+
         const transaction = await sequelize.transaction();
 
         try {
@@ -163,14 +195,14 @@ module.exports = {
                 comment: { type: "string", min: 1 }
             };
 
-            const data = {
-                comment: comment
-            };
-
-            const validate = v.validate(data, schema);
+            const validate = v.validate({
+                comment
+            }, schema);
 
             if (validate.length > 0) {
+
                 await transaction.rollback();
+
                 return res.status(400).json(
                     response(400, "Validation Error", validate)
                 );
@@ -180,7 +212,9 @@ module.exports = {
             const newComment = await Comment.findByPk(id, { transaction });
 
             if (!newComment) {
+
                 await transaction.rollback();
+
                 return res.status(404).json(
                     response(404, "Comment not found")
                 );
@@ -191,26 +225,37 @@ module.exports = {
                 newComment.user_id !== req.user.id &&
                 req.user.role !== "admin"
             ) {
+
                 await transaction.rollback();
+
                 return res.status(403).json(
                     response(403, "Forbidden", "Access denied")
                 );
 
             }
 
-            await Comment.update({
-                comment: comment
+            await newComment.update({
+
+                comment
+
             }, {
                 transaction
             });
+
             await transaction.commit();
+
             return res.status(200).json(
-                response(200, "Update Comment Success", newComment)
+                response(
+                    200,
+                    "Update Comment Success",
+                    newComment
+                )
             );
 
         } catch (error) {
 
             await transaction.rollback();
+
             return res.status(500).json(
                 response(500, "Server Error", error.message)
             );
@@ -220,43 +265,52 @@ module.exports = {
     },
 
     deleteComment: async (req, res) => {
+
         const transaction = await sequelize.transaction();
 
         try {
 
             const { id } = req.params;
+
             const comment = await Comment.findByPk(id, { transaction });
 
             if (!comment) {
-                await transaction.rollback();
-                return res.status(404).json(response(404, "Comment not found"));
 
-            }
-            if (
-                comment.user_id !== req.user.id &&
-                req.user.role !== "admin"
-            ) {
                 await transaction.rollback();
-                return res.status(403).json(
 
-                    response(403, "Forbidden", "Access denied")
+                return res.status(404).json(
+                    response(404, "Comment not found")
                 );
 
             }
 
+            if (
+                comment.user_id !== req.user.id &&
+                req.user.role !== "admin"
+            ) {
 
+                await transaction.rollback();
+
+                return res.status(403).json(
+                    response(403, "Forbidden", "Access denied")
+                );
+
+            }
 
             await comment.destroy({
                 transaction
             });
 
             await transaction.commit();
+
             return res.status(200).json(
                 response(200, "Delete Comment Success")
             );
 
         } catch (error) {
+
             await transaction.rollback();
+
             return res.status(500).json(
                 response(500, "Server Error", error.message)
             );
@@ -265,7 +319,6 @@ module.exports = {
 
     },
 
-
     restoreComment: async (req, res) => {
 
         const transaction = await sequelize.transaction();
@@ -273,7 +326,6 @@ module.exports = {
         try {
 
             const { id } = req.params;
-
             const comment = await Comment.findOne({
 
                 where: { id },
@@ -293,6 +345,7 @@ module.exports = {
             }
 
             await Comment.restore({
+
                 where: { id },
                 transaction
 
@@ -301,17 +354,19 @@ module.exports = {
             await transaction.commit();
 
             return res.status(200).json(
-                response(
-                    200,
-                    "Restore Comment Success"
-                )
+                response(200, "Restore Comment Success")
             );
 
         } catch (error) {
 
             await transaction.rollback();
 
-            return res.status(500).json(response(500, "Server Error", error.message));
+            return res.status(500).json(
+                response(500, "Server Error", error.message)
+            );
+
         }
+
     }
+
 };
