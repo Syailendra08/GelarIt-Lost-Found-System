@@ -35,18 +35,6 @@ router.put(
 
 
 
-router.delete(
-    "/notifications/:id",
-   
-    notificationController.deleteNotification
-);
 
-
-
-router.put(
-    "/notifications/restore/:id",
-   
-    notificationController.restoreNotification
-);
 
 module.exports = router;
