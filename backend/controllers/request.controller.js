@@ -10,7 +10,7 @@ const {
 } = require("../models");
 
 const { response } = require("../helpers/response.formatter");
-const { where } = require("sequelize");
+const { where, Op } = require("sequelize");
 
 module.exports = {
 
@@ -125,7 +125,7 @@ module.exports = {
             });
 
             const formatPagination = {
-                 data: rows,
+                data: rows,
                 limit: dataLimit,
                 rangeData: (offset + 1) + "-" + (offset + rows.length),
                 currentPage: currentPage,
@@ -301,52 +301,89 @@ module.exports = {
     },
 
     markAsTaken: async (req, res) => {
-    const transaction = await sequelize.transaction();
-    try {
-        const item = await Item.findByPk(req.params.id, { transaction });
 
-        if (!item) {
-            await transaction.rollback();
-            return res.status(404).json(response(404, "Item not found"));
-        }
+        const transaction = await sequelize.transaction();
 
-        if (item.status !== "claimed") {
-            await transaction.rollback();
-            return res.status(400).json(
-                response(400, "Item must be claimed first")
+        try {
+
+            const request = await Request.findByPk(
+                req.params.id,
+                { transaction }
             );
+
+            if (!request) {
+
+                await transaction.rollback();
+
+                return res.status(404).json(
+                    response(404, "Request not found")
+                );
+
+            }
+
+            const item = await Item.findByPk(
+                request.item_id,
+                { transaction }
+            );
+
+            if (!item) {
+
+                await transaction.rollback();
+
+                return res.status(404).json(
+                    response(404, "Item not found")
+                );
+
+            }
+
+            if (item.status !== "claimed") {
+
+                await transaction.rollback();
+
+                return res.status(400).json(
+                    response(400, "Item must be claimed first")
+                );
+
+            }
+
+            await item.update(
+                {
+                    status: "taken"
+                },
+                {
+                    transaction
+                }
+            );
+
+            await Request.update(
+                {
+                    status: "completed"
+                },
+                {
+                    where: {
+                        item_id: item.id
+                    },
+                    transaction
+                }
+            );
+
+            await transaction.commit();
+
+            return res.status(200).json(
+                response(200, "Item marked as taken & request completed")
+            );
+
+        } catch (error) {
+
+            await transaction.rollback();
+
+            return res.status(500).json(
+                response(500, "Server Error", error.message)
+            );
+
         }
 
-        
-        await item.update(
-            { status: "taken" },
-            { transaction }
-        );
-
-   
-        await Request.update(
-            { status: "completed" },
-            {
-                where: { item_id: item.id },
-                transaction
-            }
-        );
-
-        await transaction.commit();
-
-        return res.status(200).json(
-            response(200, "Item marked as taken & request completed")
-        );
-
-    } catch (error) {
-        await transaction.rollback();
-
-        return res.status(500).json(
-            response(500, "Server Error", error.message)
-        );
-    }
-},
-
+    },
     deleteRequest: async (req, res) => {
 
         try {
@@ -368,46 +405,44 @@ module.exports = {
     },
 
     getTrashRequests: async (req, res) => {
-    try {
-        const requests = await Request.findAll({
-
-            where: {
-                deletedAt: {
-                    [Op.ne]: null
-                }
-            },
-
-            paranoid: false,
-
-            include: [
-
-                {
-                    model: Item,
-                    as: "item"
+        try {
+            const requests = await Request.findAll({
+                where: {
+                    deletedAt: {
+                        [Op.ne]: null
+                    }
                 },
 
-                {
-                    model: User,
-                    as: "user",
-                    attributes: {
-                        exclude: ["password"]
+                paranoid: false,
+                include: [
+
+                    {
+                        model: Item,
+                        as: "item"
+                    },
+
+                    {
+                        model: User,
+                        as: "user",
+                        attributes: {
+                            exclude: ["password"]
+                        }
                     }
-                }
 
-            ]
+                ]
 
-        });
+            });
 
-        return res.status(200).json(
-            response(200, "Success get trash requests", requests)
-        );
+            return res.status(200).json(
+                response(200, "Success get trash requests", requests)
+            );
 
-    } catch (error) {
-        return res.status(500).json(
-            response(500, "Server Error", error.message)
-        );
-    }
-},
+        } catch (error) {
+            return res.status(500).json(
+                response(500, "Server Error", error.message)
+            );
+        }
+    },
 
     restoreRequest: async (req, res) => {
         try {
@@ -441,8 +476,46 @@ module.exports = {
             return res.status(500).json(response(500, "Server Error", error.message));
 
         }
+    },
 
-    }
+    forceDeleteRequest: async (req, res) => {
+        try {
+
+            const request = await Request.findOne({
+
+                where: {
+                    id: req.params.id
+                },
+
+                paranoid: false
+
+            });
+
+            if (!request) {
+
+                return res.status(404).json(
+                    response(404, "Request not found")
+                );
+
+            }
+
+            await request.destroy({
+                force: true
+            });
+
+            return res.status(200).json(
+                response(200, "Force Delete Request Success")
+            );
+
+        } catch (error) {
+
+            return res.status(500).json(
+                response(500, "Server Error", error.message)
+            );
+
+        }
+
+    },
 
 
 }
