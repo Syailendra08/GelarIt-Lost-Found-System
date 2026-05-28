@@ -56,6 +56,8 @@ module.exports = {
 
                 user_id: item.finder_id,
                 title: "New Request",
+                type: "request",
+                is_read: false,
                 message: `${req.user.name} requested your item ${item.name}`
 
             }, {
@@ -236,6 +238,8 @@ module.exports = {
             await Notification.create({
                 user_id: request.user_id,
                 title: "Request Approved",
+                type: "approved",
+                is_read: false,
                 message: `Your request for ${item.name} has been approved`
 
             }, {
@@ -279,6 +283,8 @@ module.exports = {
             await Notification.create({
                 user_id: request.user_id,
                 title: "Request Rejected",
+                type: "rejected",
+                is_read: false,
                 message: `Your request for ${item.name} has been rejected`
 
             }, {

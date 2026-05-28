@@ -192,6 +192,9 @@ module.exports = {
             const offset = (currentPage - 1) * dataLimit;
 
             const { count, rows } = await Item.findAndCountAll({
+                where: {
+                    finder_id: id
+                },
                 offset: offset,
                 limit: dataLimit,
 
