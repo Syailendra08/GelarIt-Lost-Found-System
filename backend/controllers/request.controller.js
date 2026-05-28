@@ -125,12 +125,12 @@ module.exports = {
             });
 
             const formatPagination = {
-                data: rows,
+                 data: rows,
                 limit: dataLimit,
-                rows: (offset + 1) + "-" + (offset + rows.length),
+                rangeData: (offset + 1) + "-" + (offset + rows.length),
+                currentPage: currentPage,
+                totalPage: Math.ceil(count / dataLimit),
                 total: count,
-                page: currentPage,
-                totalPage: Math.ceil(count / dataLimit)
             };
             return res.status(200).json(response(200, "Success get all requests", formatPagination));
         } catch (error) {
@@ -366,6 +366,48 @@ module.exports = {
             );
         }
     },
+
+    getTrashRequests: async (req, res) => {
+    try {
+        const requests = await Request.findAll({
+
+            where: {
+                deletedAt: {
+                    [Op.ne]: null
+                }
+            },
+
+            paranoid: false,
+
+            include: [
+
+                {
+                    model: Item,
+                    as: "item"
+                },
+
+                {
+                    model: User,
+                    as: "user",
+                    attributes: {
+                        exclude: ["password"]
+                    }
+                }
+
+            ]
+
+        });
+
+        return res.status(200).json(
+            response(200, "Success get trash requests", requests)
+        );
+
+    } catch (error) {
+        return res.status(500).json(
+            response(500, "Server Error", error.message)
+        );
+    }
+},
 
     restoreRequest: async (req, res) => {
         try {

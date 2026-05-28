@@ -68,7 +68,7 @@ module.exports = {
 
                     user_id: item.finder_id,
                     title: "New Comment",
-                    message: `${req.user.name} commented on "${item.name}"`,
+                    message: `${req.user.name}: ${req.body.comment}`,
                     type: "comment",
                     item_id: item.id,
                     is_read: false
