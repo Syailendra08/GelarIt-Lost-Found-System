@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "./components/Admin/AdminSidebar";
 import AdminHeader from "./components/Admin/AdminHeader";
+import Footer from "./components/Footer";
 
 
 export default function AdminTemplate() {
@@ -16,6 +17,7 @@ export default function AdminTemplate() {
 
           <Outlet />
         </main>
+        <Footer />
       </div>
       </div>
       );

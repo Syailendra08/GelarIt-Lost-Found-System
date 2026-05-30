@@ -78,7 +78,7 @@ export default function DashboardStats() {
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4 mb-4">
       {cards.map((item, index) => {
         const Icon = item.icon;
 
