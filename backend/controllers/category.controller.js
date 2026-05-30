@@ -283,8 +283,31 @@ module.exports = {
     }
 },
 
+getCategoryStats: async (req, res) => {
+    try {
 
+        const totalCategories = await Category.count();
 
+        const deletedCategories = await Category.count({
+            paranoid: false,
+            where: {
+                deletedAt: {
+                    [Op.ne]: null
+                }
+            }
+        });
+
+        return res.status(200).json(response(200, "Success get category stats", {
+                totalCategories,
+                deletedCategories
+            })
+        );
+
+    } catch (error) {
+
+        return res.status(500).json(response(500, "Server Error", error.message));
+    }
+},
 
 
 }

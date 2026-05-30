@@ -12,6 +12,7 @@ router.post(
 
 router.get("/", categoryController.getCategory);
 router.get("/trash", checkAdmin, categoryController.getTrashCategory);
+router.get("/stats", checkAdmin, categoryController.getCategoryStats);
 router.get("/export", checkAdmin, categoryController.exportCategories);
 router.get("/:id", categoryController.showCategory);
 router.put("/:id", upload.none(), checkAdmin, categoryController.updateCategory);
