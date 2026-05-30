@@ -156,4 +156,5 @@ export const getLocationStats = async () => {
      if (!response.ok) {
         throw new Error("Failed stats locations");
     }
+     return response.json();
 };

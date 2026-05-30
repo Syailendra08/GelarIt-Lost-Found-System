@@ -185,4 +185,5 @@ export const getItemStats = async () => {
      if (!response.ok) {
         throw new Error("Failed stats items");
     }
+     return response.json();
 }

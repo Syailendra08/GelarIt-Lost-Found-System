@@ -160,4 +160,5 @@ export const getRequestStats = async () => {
      if (!response.ok) {
         throw new Error("Failed stats requests");
     }
+    return response.json();
 }

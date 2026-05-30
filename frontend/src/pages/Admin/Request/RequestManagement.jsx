@@ -8,6 +8,11 @@ import {
     Trash2,
     ChevronLeft,
     ChevronRight,
+    Clock,
+    CheckCircle,
+    XCircle,
+    PackageCheck,
+    Layers,
 } from "lucide-react";
 
 import LoadingComp from "../../../components/LoadingComp";
@@ -18,14 +23,23 @@ import {
     rejectRequest,
     markAsTaken,
     deleteRequest,
+    getRequestStats,
 } from "../../../api/request.api";
 import { useNavigate } from "react-router-dom";
+import StatsCard from "../../../components/Admin/StatsCard";
 
 export default function RequestManagement() {
     const navigate = useNavigate();
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
+    const [stats, setStats] = useState({
+    total: 0,
+    pending: 0,
+    approved: 0,
+    rejected: 0,
+    completed: 0,
+});
 
     const [pagination, setPagination] = useState({
         total: 0,
@@ -184,8 +198,53 @@ export default function RequestManagement() {
         }
     }
 
+    const fetchStats = async () => {
+        const result = await getRequestStats();
+   
+        setStats(result.data);
+    };
+    useEffect(() => {
+        fetchStats();
+    }, []);
+
     return (
         <div className="p-6">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <StatsCard
+            title="Pending"
+            value={stats.pending}
+            icon={Clock}
+            iconBg="bg-yellow-100"
+            iconColor="text-yellow-600"
+        />
+
+        <StatsCard
+            title="Approved"
+            value={stats.approved}
+            icon={CheckCircle}
+            iconBg="bg-green-100"
+            iconColor="text-green-600"
+        />
+
+        <StatsCard
+            title="Rejected"
+            value={stats.rejected}
+            icon={XCircle}
+            iconBg="bg-red-100"
+            iconColor="text-red-600"
+        />
+
+        <StatsCard
+            title="Completed"
+            value={stats.completed}
+            icon={PackageCheck}
+            iconBg="bg-blue-10"
+            iconColor="text-blue-600"
+        />
+    </div>
+
             <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
                  <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5">
 
@@ -204,6 +263,8 @@ export default function RequestManagement() {
         </button>
 
     </div>
+
+       
 
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-225">

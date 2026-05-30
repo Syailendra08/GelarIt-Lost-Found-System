@@ -183,4 +183,5 @@ export const getUserStats = async () => {
      if (!response.ok) {
         throw new Error("Failed stats users");
     }
+     return response.json();
 }

@@ -1,12 +1,10 @@
-// api/comment.api.js
-
 const BASE_URL = "http://localhost:3000";
 
 const getToken = () => {
   return localStorage.getItem("token");
 };
 
-// GET COMMENTS BY ITEM
+
 export const getCommentsByItem = async (
   itemId,
   {

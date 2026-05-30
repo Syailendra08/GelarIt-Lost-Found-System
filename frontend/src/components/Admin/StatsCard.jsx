@@ -1,6 +1,6 @@
 export default function StatsCard({title, value, icon: Icon, iconBg, iconColor}) {
   return (
-    <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+    <div className="bg-white rounded-2xl p-5 w-full mb-4 shadow-sm border border-gray-100">
       <div className="flex items-center gap-4">
         
         <div className={`p-3 rounded-xl ${iconBg}`}>

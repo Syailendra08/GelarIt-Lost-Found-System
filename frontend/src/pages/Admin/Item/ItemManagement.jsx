@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 import TableCRUD from "../../../components/admin/TableCRUD";
-import { deleteItem, exportItems, getItems } from "../../../api/item.api";
+import { deleteItem, exportItems, getItems, getItemStats } from "../../../api/item.api";
 import StatsCard from "../../../components/Admin/StatsCard";
-import { Package } from "lucide-react";
+import { CheckCircle, Package, PackageCheck, Search } from "lucide-react";
 
 export default function ItemManagement() {
     const navigate = useNavigate();
@@ -13,6 +13,12 @@ export default function ItemManagement() {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
+    const [stats, setStats] = useState({
+    total: 0,
+    found: 0,
+    lost: 0,
+    claimed: 0,
+});
 
     const [pagination, setPagination] = useState({
         total: 0,
@@ -88,6 +94,15 @@ export default function ItemManagement() {
         }
     }
 
+    const fetchStats = async () => {
+    const result = await getItemStats();
+   console.log("stats result:", result);
+    setStats(result.data);
+};
+useEffect(() => {
+    fetchStats();
+}, []);
+
     const columns = [
         { key: "no", label: "ID" },
         { key: "name", label: "Name" },
@@ -113,8 +128,40 @@ export default function ItemManagement() {
 
     return (
         <div className="p-6">
-            <div className="space-y-6">
-            <StatsCard title="Total Item" value={pagination.total} icon={Package} iconBg="bg-red-100" iconColor="text-yellow-100" />
+           
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatsCard
+            title="Total Item"
+            value={stats.total}
+            icon={Package}
+            iconBg="bg-blue-100"
+            iconColor="text-blue-600"
+        />
+
+        <StatsCard
+            title="Found"
+            value={stats.found}
+            icon={PackageCheck}
+            iconBg="bg-green-100"
+            iconColor="text-green-600"
+        />
+
+        <StatsCard
+            title="Lost"
+            value={stats.lost}
+            icon={Search}
+            iconBg="bg-yellow-100"
+            iconColor="text-yellow-600"
+        />
+
+        <StatsCard
+            title="Claimed"
+            value={stats.claimed}
+            icon={CheckCircle}
+            iconBg="bg-purple-100"
+            iconColor="text-purple-600"
+        />
+    </div>
             
                 <TableCRUD
                     title="Items List"
@@ -133,6 +180,6 @@ export default function ItemManagement() {
                     }}
                 />
            </div>
-        </div>
+        
     );
 }
