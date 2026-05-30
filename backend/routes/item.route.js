@@ -10,6 +10,7 @@ router.post("/", upload.single('image'), checkToken, itemController.createItem);
 router.get("/", itemController.getItems);
 router.get("/trash", checkToken, checkAdmin, itemController.getTrashItems);
 router.get("/export", checkToken, checkAdmin,  itemController.exportItems);
+router.get("/stats", checkToken, checkAdmin, itemController.getItemStats);
 router.get("/:id", checkToken, itemController.showItem)
 router.put("/:id", checkToken, upload.single('image'), itemController.updateItem)
 router.get("/users/:id", checkToken, itemController.getItemsByUser);

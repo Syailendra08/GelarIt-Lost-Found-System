@@ -686,4 +686,48 @@ module.exports = {
             return res.status(500).json(response(500, "Server Error", error.message));
         }
     },
+
+    getItemStats: async (req, res) => {
+    try {
+        const total = await Item.count();
+        const lost = await Item.count({
+            where: {
+                status: "lost"
+            }
+        });
+
+        const found = await Item.count({
+            where: {
+                status: "found"
+            }
+        });
+
+        const claimed = await Item.count({
+            where: {
+                status: "claimed"
+            }
+        });
+
+        const taken = await Item.count({
+            where: {
+                status: "taken"
+            }
+        });
+
+        return res.status(200).json(
+            response(200, "Success get item stats", {
+                total,
+                lost,
+                found,
+                claimed,
+                taken
+            })
+        );
+
+    } catch (error) {
+        return res.status(500).json(
+            response(500, "Server Error", error.message)
+        );
+    }
+},
 }

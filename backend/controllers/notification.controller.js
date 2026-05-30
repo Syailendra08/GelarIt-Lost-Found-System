@@ -10,13 +10,11 @@ module.exports = {
 
    
     getMyNotifications: async (req, res) => {
-
         try {
-
             const notifications = await Notification.findAll({
-
                 where: {
-                    user_id: req.user.id
+                    user_id: req.user.id,
+                    is_read: false,
                 },
 
                 include: [
@@ -38,16 +36,9 @@ module.exports = {
 
             });
 
-            return res.status(200).json(
-                response(
-                    200,
-                    "Success get notifications",
-                    notifications
-                )
-            );
+            return res.status(200).json(response(200, "Success get notifications", notifications));
 
         } catch (error) {
-
             return res.status(500).json(response(500, "Server Error",error.message));
         }
     },
@@ -71,11 +62,8 @@ module.exports = {
                                 exclude: ["password"]
                             }
                         }
-
                     ]
-
                 }
-
             );
 
             if (!notification) {
@@ -166,7 +154,6 @@ module.exports = {
             return res.status(500).json(response(500, "Server Error", error.message));
 
         }
-
     },
 
 
