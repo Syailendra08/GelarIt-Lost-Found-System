@@ -7,7 +7,10 @@ import {
     deleteLocation,
     exportLocations,
     getLocations,
+    getLocationStats,
 } from "../../../api/locations.api";
+import StatsCard from "../../../components/Admin/StatsCard";
+import { MapPin, Trash2 } from "lucide-react";
 
 export default function LocationManagement() {
     const navigate = useNavigate();
@@ -20,6 +23,13 @@ export default function LocationManagement() {
             totalPage: 1,
             rangeData: "0-0",
         });
+
+
+    const [stats, setStats] = useState({
+        totalLocation: 0,
+        deletedLocation: 0,
+    });
+
 
     async function fetchLocations() {
         try {
@@ -62,14 +72,14 @@ export default function LocationManagement() {
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchLocations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page]);
 
     async function handleDelete(row) {
 
         const confirm =
             await Swal.fire({
-                title:"Delete this location?",
+                title: "Delete this location?",
                 text: row.name,
                 icon: "warning",
                 showCancelButton: true,
@@ -115,8 +125,8 @@ export default function LocationManagement() {
     const columns = [
         { key: "no", label: "ID", },
         { key: "name", label: "Location Name", },
-        { key: "description", label: "Description",},
-        { key: "createdAt", label: "Created At",},
+        { key: "description", label: "Description", },
+        { key: "createdAt", label: "Created At", },
     ];
 
     const rows = locations.map(
@@ -128,8 +138,37 @@ export default function LocationManagement() {
             createdAt: new Date(item.createdAt).toLocaleDateString(),
         }));
 
+        const fetchStats = async () => {
+            const result = await getLocationStats();
+           console.log("stats result:", result);
+            setStats(result.data);
+        };
+        useEffect(() => {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            fetchStats();
+        }, []);
+
     return (
         <div className="p-6">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <StatsCard
+                    title="Total Location"
+                    value={stats.totalLocation}
+                    icon={MapPin}
+                    iconBg="bg-indigo-100"
+                    iconColor="text-indigo-600"
+                />
+
+                <StatsCard
+                    title="Deleted Location"
+                    value={stats.deletedLocation}
+                    icon={Trash2}
+                    iconBg="bg-red-100"
+                    iconColor="text-red-600"
+                />
+
+            </div>
 
             <TableCRUD
                 title="Locations List"

@@ -12,7 +12,6 @@ import {
     CheckCircle,
     XCircle,
     PackageCheck,
-    Layers,
 } from "lucide-react";
 
 import LoadingComp from "../../../components/LoadingComp";
@@ -204,6 +203,7 @@ export default function RequestManagement() {
         setStats(result.data);
     };
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchStats();
     }, []);
 

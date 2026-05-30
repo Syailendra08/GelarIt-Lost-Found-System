@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import TableCRUD from "../../../components/admin/TableCRUD";
-import { deleteUser, exportUsers, getUsers } from "../../../api/user.api";
+import { deleteUser, exportUsers, getUsers, getUserStats } from "../../../api/user.api";
+import StatsCard from "../../../components/Admin/StatsCard";
+import { GraduationCap, ShieldCheck, Users, UserX } from "lucide-react";
 
 export default function UserManagement() {
     const navigate = useNavigate();
@@ -13,6 +15,13 @@ export default function UserManagement() {
         total: 0,
         totalPage: 1,
         rangeData: "0-0",
+    });
+
+    const [stats, setStats] = useState({
+        totalUsers: 0,
+        totalStudents: 0,
+        totalAdmins: 0,
+        deletedUsers: 0,
     });
 
     async function fetchUsers() {
@@ -130,8 +139,54 @@ export default function UserManagement() {
         createdAt: new Date(item.createdAt).toLocaleDateString(),
     }));
 
+    const fetchStats = async () => {
+        const result = await getUserStats();
+        console.log("stats result:", result);
+        setStats(result.data);
+    };
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        fetchStats();
+    }, []);
+
+
     return (
         <div className="p-6">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatsCard
+                    title="Total Users"
+                    value={stats.totalUsers}
+                    icon={Users}
+                    iconBg="bg-blue-100"
+                    iconColor="text-blue-600"
+                />
+
+                <StatsCard
+                    title="Students"
+                    value={stats.totalStudents}
+                    icon={GraduationCap}
+                    iconBg="bg-green-100"
+                    iconColor="text-green-600"
+                />
+
+                <StatsCard
+                    title="Admins"
+                    value={stats.totalAdmins}
+                    icon={ShieldCheck}
+                    iconBg="bg-purple-100"
+                    iconColor="text-purple-600"
+                />
+
+                <StatsCard
+                    title="Deleted Users"
+                    value={stats.deletedUsers}
+                    icon={UserX}
+                    iconBg="bg-red-100"
+                    iconColor="text-red-600"
+                />
+
+            </div>
             <TableCRUD
                 title="Users List"
                 columns={columns}

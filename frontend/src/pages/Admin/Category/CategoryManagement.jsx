@@ -7,7 +7,10 @@ import {
     deleteCategory,
     exportCategories,
     getCategories,
+    getCategoryStats,
 } from "../../../api/categories.api";
+import StatsCard from "../../../components/Admin/StatsCard";
+import { Folder, Trash2 } from "lucide-react";
 
 export default function CategoryManagement() {
     const navigate = useNavigate();
@@ -18,6 +21,11 @@ export default function CategoryManagement() {
         total: 0,
         totalPage: 1,
         rangeData: "0-0",
+    });
+
+    const [stats, setStats] = useState({
+        totalCategories: 0,
+        deletedCategories: 0,
     });
 
     async function fetchCategories() {
@@ -53,7 +61,7 @@ export default function CategoryManagement() {
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchCategories();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page]);
 
     async function handleDelete(row) {
@@ -118,8 +126,37 @@ export default function CategoryManagement() {
         createdAt: new Date(item.createdAt).toLocaleDateString(),
     }));
 
+    const fetchStats = async () => {
+        const result = await getCategoryStats();
+
+        setStats(result.data);
+    };
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        fetchStats();
+    }, []);
+
     return (
         <div className="p-6">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <StatsCard
+                    title="Total Category"
+                    value={stats.totalCategories}
+                    icon={Folder}
+                    iconBg="bg-blue-100"
+                    iconColor="text-blue-600"
+                />
+
+                <StatsCard
+                    title="Deleted Category"
+                    value={stats.deletedCategories}
+                    icon={Trash2}
+                    iconBg="bg-red-100"
+                    iconColor="text-red-600"
+                />
+
+            </div>
             <TableCRUD
                 title="Categories List"
                 columns={columns}
