@@ -363,6 +363,43 @@ exportUsers: async (req, res) => {
         } catch (error) {
             return res.status(500).json(response(500, "Server Error", error.message));
         }
+    },
+
+    getUserStats: async (req, res) => {
+    try {
+        const totalUsers = await User.count();
+        
+        const totalStudents = await User.count({
+            where: {
+                role: "student"
+            }
+        });
+
+        const totalAdmins = await User.count({
+            where: {
+                role: "admin"
+            }
+        });
+
+        const deletedUsers = await User.count({
+            paranoid: false,
+            where: {
+                deletedAt: {
+                    [Op.ne]: null  
+                }
+            }
+        });
+
+        return res.status(200).json(response(200, "Success get item statisticts", {
+            totalUsers,
+            totalStudents,
+            totalAdmins,
+            deletedUsers,
+        }))
+
+    } catch (error) {
+         return res.status(500).json(response(500, "Server Error", error.message));
     }
+}
 
 }

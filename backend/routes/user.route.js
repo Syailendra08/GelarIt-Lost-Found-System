@@ -6,6 +6,7 @@ const upload = require("../middlewares/upload");
 
 router.post("/", upload.none(), userController.createUser);
 router.get("/export", userController.exportUsers)
+router.get("/stats", userController.getUserStats);
 router.get("/trash", userController.getTrashUsers);
 router.patch("/trash/restore/:id", userController.restoreUser);
 router.delete("/trash/force-delete/:id", userController.forceDeleteUser);
