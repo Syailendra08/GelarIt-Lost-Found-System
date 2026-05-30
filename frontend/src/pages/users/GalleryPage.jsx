@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 import {
   Search,
-  Filter,
   MapPin,
   CalendarDays,
 } from "lucide-react";
@@ -13,6 +12,7 @@ import StatusBadge from "../../components/StatusBadge";
 import { getCategories } from "../../api/categories.api";
 import { getLocations } from "../../api/locations.api";
 import { Link } from "react-router-dom";
+import PageHeader from "../../components/PageHeader";
 
 export default function GalleryPage() {
 
@@ -71,10 +71,13 @@ export default function GalleryPage() {
 
   useEffect(() => {
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchItems();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, search, selectedCategory, selectedLocation]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchFilters();
   }, []);
 
@@ -82,17 +85,7 @@ export default function GalleryPage() {
     <>
       <div className="min-h-screen bg-[#f6f4f8] px-4 py-8 md:px-10">
 
-        <div className="mb-6">
-
-          <h1 className="text-3xl font-bold text-gray-800">
-            Items Gallery
-          </h1>
-
-          <p className="text-sm text-gray-500 mt-1">
-            Search and browse through recently found and reported items.
-          </p>
-
-        </div>
+       <PageHeader title="Items Gallery" description="Search and browse through recently found and reported it" />
 
         <div className="mb-8 rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row">
@@ -162,10 +155,7 @@ export default function GalleryPage() {
               </select>
 
 
-              <button className="flex h-14 items-center justify-center gap-2 rounded-xl bg-[#0d47c9] px-6 text-sm font-semibold text-white transition hover:bg-blue-800">
-                <Filter size={16} />
-                Filters
-              </button>
+             
             </div>
           </div>
         </div>

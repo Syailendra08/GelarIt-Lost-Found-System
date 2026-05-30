@@ -4,6 +4,8 @@ import Swal from "sweetalert2";
 
 import TableCRUD from "../../../components/admin/TableCRUD";
 import { deleteItem, exportItems, getItems } from "../../../api/item.api";
+import StatsCard from "../../../components/Admin/StatsCard";
+import { Package } from "lucide-react";
 
 export default function ItemManagement() {
     const navigate = useNavigate();
@@ -111,22 +113,26 @@ export default function ItemManagement() {
 
     return (
         <div className="p-6">
-            <TableCRUD
-                title="Items List"
-                columns={columns}
-                rows={rows}
-                loading={loading}
-                page={page}
-                setPage={setPage}
-                pagination={pagination}
-                onEdit={(row) => navigate(`/admin/items/edit/${row.id}`)}
-                onCreate={() => navigate("/admin/items/create")}
-                onDelete={handleDelete}
-                onTrash={() => navigate("/admin/items/trash")}
-                onExport={async () => {
-                    await exportItems();
-                }}
-            />
+            <div className="space-y-6">
+            <StatsCard title="Total Item" value={pagination.total} icon={Package} iconBg="bg-red-100" iconColor="text-yellow-100" />
+            
+                <TableCRUD
+                    title="Items List"
+                    columns={columns}
+                    rows={rows}
+                    loading={loading}
+                    page={page}
+                    setPage={setPage}
+                    pagination={pagination}
+                    onEdit={(row) => navigate(`/admin/items/edit/${row.id}`)}
+                    onCreate={() => navigate("/admin/items/create")}
+                    onDelete={handleDelete}
+                    onTrash={() => navigate("/admin/items/trash")}
+                    onExport={async () => {
+                        await exportItems();
+                    }}
+                />
+           </div>
         </div>
     );
 }

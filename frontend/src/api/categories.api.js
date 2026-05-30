@@ -1,8 +1,18 @@
 const BASE_URL = "http://localhost:3000/categories";
 
 const getToken = () => {
-  return localStorage.getItem("token");
+    return localStorage.getItem("token");
 };
+
+const defaultHeaders = (isJson = true) => ({
+
+    ...(isJson && {
+        "Content-Type": "application/json",
+    }),
+
+    Authorization: `Bearer ${getToken()}`
+});
+
 
 export const getCategories = async ({
   page = 1,
@@ -11,7 +21,6 @@ export const getCategories = async ({
   sortBy = "",
   order = ""
 } = {}) => {
-
   const query = new URLSearchParams({
     page,
     limit,
@@ -23,9 +32,7 @@ export const getCategories = async ({
   const response = await fetch(
     `${BASE_URL}?${query.toString()}`,
     {
-      headers: {
-        Authorization: `Bearer ${getToken()}`
-      }
+      headers: defaultHeaders()
     }
   );
 
@@ -33,13 +40,10 @@ export const getCategories = async ({
 };
 
 export const getCategoryById = async (id) => {
-
   const response = await fetch(
     `${BASE_URL}/${id}`,
     {
-      headers: {
-        Authorization: `Bearer ${getToken()}`
-      }
+      headers: defaultHeaders()
     }
   );
 
@@ -47,13 +51,9 @@ export const getCategoryById = async (id) => {
 };
 
 export const createCategory = async (data) => {
-
   const response = await fetch(BASE_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`
-    },
+    headers: defaultHeaders(true),
     body: JSON.stringify({
       name: data.name,
       description: data.description
@@ -64,13 +64,9 @@ export const createCategory = async (data) => {
 };
 
 export const updateCategory = async (id, data) => {
-
   const response = await fetch(`${BASE_URL}/${id}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`
-    },
+    headers: defaultHeaders(true),
     body: JSON.stringify({
       name: data.name,
       description: data.description
@@ -81,48 +77,35 @@ export const updateCategory = async (id, data) => {
 };
 
 export const deleteCategory = async (id) => {
-
   const response = await fetch(`${BASE_URL}/${id}`, {
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${getToken()}`
-    }
+    headers: defaultHeaders()
   });
 
   return response.json();
 };
 
 export const restoreCategory = async (id) => {
-
   const response = await fetch(`${BASE_URL}/trash/restore/${id}`, {
     method: "PATCH",
-    headers: {
-      Authorization: `Bearer ${getToken()}`
-    }
+    headers: defaultHeaders()
   });
 
   return response.json();
 };
 
-
 export const getTrashCategories = async () => {
-
   const response = await fetch(`${BASE_URL}/trash`, {
-    headers: {
-      Authorization: `Bearer ${getToken()}`
-    }
+    headers: defaultHeaders()
   });
 
   return response.json();
 };
 
 export const forceDeleteCategory = async (id) => {
-
   const response = await fetch(`${BASE_URL}/trash/force-delete/${id}`, {
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${getToken()}`
-    }
+    headers: defaultHeaders()
   });
 
   return response.json();
@@ -130,9 +113,7 @@ export const forceDeleteCategory = async (id) => {
 
 export const exportCategories = async () => {
   const response = await fetch(`${BASE_URL}/export`, {
-    headers: {
-      Authorization: `Bearer ${getToken()}`
-    }
+    headers: defaultHeaders()
   });
 
   if (!response.ok) {
@@ -148,5 +129,18 @@ export const exportCategories = async () => {
   document.body.appendChild(link);
   link.click();
   link.remove();
+
   window.URL.revokeObjectURL(url);
+};
+
+export const getCategoryStats = async () => {
+  const response = await fetch(`${BASE_URL}/stats`, {
+    headers: defaultHeaders()
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed stats categories");
+  }
+
+  return response.json();
 };

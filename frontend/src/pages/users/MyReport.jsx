@@ -4,6 +4,7 @@ import DashboardReportList from "../../components/dashboard/DashboardReportList"
 import { deleteItem, getItemsByUser } from "../../api/item.api";
 import { AuthContext } from "../../contexts/AuthContext";
 import Swal from "sweetalert2";
+import PageHeader from "../../components/PageHeader";
 
 export default function MyReport() {
 
@@ -21,8 +22,6 @@ export default function MyReport() {
     ) {
 
         try {
-
-            
             const result =
                 await getItemsByUser(
                     userId,
@@ -31,7 +30,6 @@ export default function MyReport() {
                         order: "DESC",
                     }
                 );
-
             setReports(
                 result.data?.data || []
             );
@@ -39,13 +37,7 @@ export default function MyReport() {
         } catch (error) {
 
             console.log(error);
-
-        } finally {
-
-          
-
         }
-
     }
     
     const handleDelete = async (id) => {
@@ -94,14 +86,12 @@ export default function MyReport() {
     useEffect(() => {
 
         if (user?.id) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             fetchReports(user.id);
         }
 
     }, [user]);
 
-    // ====================================
-    // FILTER REPORTS
-    // ====================================
     const filteredReports =
         reports.filter((item) => {
 
@@ -145,21 +135,7 @@ export default function MyReport() {
 
     return (
         <div className="min-h-screen bg-[#f6f7fb] px-5 py-7 md:px-8">
-            <div className="mb-7">
-
-                <h1 className="text-4xl font-bold text-[#0F172A]">
-                    My Reports
-                </h1>
-
-                <p className="mt-2 text-sm text-gray-500">
-
-                    Manage and track the
-                    status of items you've
-                    lost or found within the
-                    campus grounds.
-
-                </p>
-            </div>
+            <PageHeader title="My Reports" description="Manage and track the status of items you've lost or found within the campus grounds." />
             <div className="mb-7 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
                 <div className="flex w-fit items-center rounded-2xl bg-[#ECECF4] p-1">
 
@@ -187,9 +163,7 @@ export default function MyReport() {
                             : "text-gray-500 hover:text-gray-700"
                             }`}
                     >
-
                         Lost Reports
-
                     </button>
 
                     <button
@@ -201,9 +175,7 @@ export default function MyReport() {
                             : "text-gray-500 hover:text-gray-700"
                             }`}
                     >
-
                         Found Reports
-
                     </button>
 
                 </div>

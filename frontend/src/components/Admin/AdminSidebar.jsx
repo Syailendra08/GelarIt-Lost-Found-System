@@ -5,15 +5,17 @@ import {
     MapPinned,
     Tags,
     Users,
-    Settings,
+
     CircleHelp,
     LogOut,
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
+import { AuthContext } from "../../contexts/AuthContext";
+import { useContext } from "react";
 
 export default function AdminSidebar() {
-
+ const { logout } = useContext(AuthContext);
 
 
 
@@ -145,22 +147,8 @@ export default function AdminSidebar() {
                     </div>
                     Student Directory
                 </NavLink>
-                {/* SETTINGS */}
-                <NavLink
-                    to="/admin/settings"
-                    className={({ isActive }) =>
-                        `group flex items-center gap-4 rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-200 ${isActive
-                            ? "bg-[#F4C400] text-[#1E293B] shadow-sm"
-                            : "text-gray-500 hover:bg-white hover:text-[#00288E] hover:shadow-sm"
-                        }`
-                    }
-                >
-
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm">
-                        <Settings size={18} />
-                    </div>
-                    Settings
-                </NavLink>
+ 
+               
             </div>
 
             <div className="mt-8 border-t border-gray-200 pt-6 space-y-2">
@@ -171,7 +159,7 @@ export default function AdminSidebar() {
                     Help Center
                 </button>
 
-                <button className="flex w-full items-center gap-4 rounded-2xl px-4 py-3 text-sm font-semibold text-red-500 transition hover:bg-red-50">
+                <button onClick={logout} className="flex w-full items-center gap-4 rounded-2xl px-4 py-3 text-sm font-semibold text-red-500 transition hover:bg-red-50">
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm">
                         <LogOut size={18} />
                     </div>

@@ -24,7 +24,7 @@ export default function AddReportCard() {
 
             <p className="mt-3 text-sm leading-relaxed text-gray-500">
 
-                Lost something else?
+                Want to report something?
                 <br />
                 Submit a new report.
             </p>

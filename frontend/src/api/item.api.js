@@ -176,3 +176,13 @@ export const exportItems = async () => {
     link.remove();
     window.URL.revokeObjectURL(url);
 };
+
+export const getItemStats = async () => {
+    const response = await fetch(`${BASE_URL}/stats`, {
+        method: "GET",
+        headers: defaultHeaders(false),
+    });
+     if (!response.ok) {
+        throw new Error("Failed stats items");
+    }
+}

@@ -95,13 +95,10 @@ export default function RequestForm({
 
             </div>
 
-            {/* FORM */}
             <form
                 onSubmit={handleSubmit}
                 className="space-y-5"
             >
-
-                {/* TEXTAREA */}
                 <div>
 
                     <label className="mb-2 block text-sm font-semibold text-gray-700">

@@ -151,3 +151,13 @@ export const forceDeleteRequest = async (id) => {
     }
   );
 };
+
+export const getRequestStats = async () => {
+    const response = await fetch(`${BASE_URL}/requests/stats`, {
+        method: "GET",
+        headers: defaultHeaders(false),
+    });
+     if (!response.ok) {
+        throw new Error("Failed stats requests");
+    }
+}

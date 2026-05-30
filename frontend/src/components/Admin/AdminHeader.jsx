@@ -1,4 +1,3 @@
-import { Search } from "lucide-react";
 import { matchPath, useLocation } from "react-router-dom";
 
 export default function AdminHeader() {
@@ -42,27 +41,7 @@ export default function AdminHeader() {
         </h1>
       </div>
 
-      <div className="flex items-center gap-4">
-
-        <div className="relative">
-          <Search
-            size={18}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-          />
-
-          <input
-            type="text"
-            placeholder="Search items..."
-            className="w-72 rounded-2xl border border-gray-300 bg-white py-3 pl-11 pr-4 text-sm outline-none transition focus:border-[#00288E]"
-          />
-        </div>
-
       
-        <button className="rounded-2xl bg-[#F4C400] px-6 py-3 text-sm font-semibold text-[#1E293B] shadow-sm transition hover:opacity-90">
-          + Report New Item
-        </button>
-
-      </div>
     </header>
   );
 }
