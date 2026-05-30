@@ -3,7 +3,7 @@ const router = express.Router();
 const locationController = require("../controllers/location.controller");
 
 const upload = require("../middlewares/upload");
-const {checkAdmin} = require("../middlewares/auth");
+const {checkAdmin, checkToken} = require("../middlewares/auth");
 
 router.post(
     "/",
@@ -12,13 +12,14 @@ router.post(
 );
 
 router.get("/",  locationController.getLocations);
-router.get("/trash", locationController.getTrashLocations);
-router.get("/export", locationController.exportLocations);
+router.get("/trash", checkToken, checkAdmin, locationController.getTrashLocations);
+router.get("/stats", checkToken, checkAdmin, locationController.getLocationStats);
+router.get("/export", checkToken, checkAdmin, locationController.exportLocations);
 router.get("/:id",  locationController.showLocation);
-router.put("/:id", checkAdmin, upload.none(), locationController.updateLocation);
-router.delete("/:id", checkAdmin, locationController.deleteLocation);
-router.patch("/trash/restore/:id", locationController.restoreLocation);
-router.delete("/trash/force-delete/:id", locationController.forceDeleteLocation);
+router.put("/:id", checkToken, checkAdmin, upload.none(), locationController.updateLocation);
+router.delete("/:id", checkToken, checkAdmin, locationController.deleteLocation);
+router.patch("/trash/restore/:id", checkToken, checkAdmin, locationController.restoreLocation);
+router.delete("/trash/force-delete/:id", checkToken, checkAdmin, locationController.forceDeleteLocation);
 
 
 module.exports = router;

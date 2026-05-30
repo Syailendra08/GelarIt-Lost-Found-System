@@ -316,6 +316,27 @@ exportLocations: async (req, res) => {
     } catch (error) {
         return res.status(500).json(response(500, "Server Error", error.message));
     }
+},
+
+getLocationStats: async (req, res) => {
+    try {
+        const totalLocation = await Location.count();
+
+        const deletedLocation = await Location.count({
+            where: {
+                deletedAt: {
+                [Op.ne]: null
+                }
+            }
+        });
+        return res.status (200).json(response(200, "Success get location statistics", {
+            totalLocation,
+            deletedLocation
+        })
+    );
+    } catch (error ) {
+        return res.status(500).json(response(500, "Server Error", error.message));
+    }
 }
 
    
