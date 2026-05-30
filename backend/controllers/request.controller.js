@@ -517,5 +517,47 @@ module.exports = {
 
     },
 
+    getRequestStats: async (req, res) => {
+        try {
+            const total = await Request.count();
+            const pending = await Request.count({
+                where: {
+                    status: "pending"
+                }
+            });
+
+            const approved = await Request.count({
+                where: {
+                    status: "approved"
+                }
+            });
+
+            const rejected = await Request.count({
+                where: {
+                    status: "rejected"
+                }
+            });
+            
+            const completed = await Request.count({
+                where: {
+                    status: "completed"
+                }
+            });
+
+            return res.status(200).json(
+                response(200, "Success get item stats", {
+                    total,
+                    pending,
+                    approved,
+                    rejected,
+                    completed,
+                })
+            );
+        }   catch (error) {
+        return res.status(500).json(response(500, "Server Error", error.message)
+        );
+    }
+       
+    }
 
 }

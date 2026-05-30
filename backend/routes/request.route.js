@@ -12,6 +12,7 @@ const upload = require("../middlewares/upload");
 
 router.post("/items/:id/requests", checkToken, upload.none(), requestController.createRequest);
 router.get("/requests", checkToken, requestController.getAllRequests);
+router.get("/requests/stats", checkToken, checkAdmin, requestController.getRequestStats);
 router.get("/requests/trash", checkToken, checkAdmin, requestController.getTrashRequests);
 router.get("/requests/:id", checkToken, requestController.getRequestById);
 router.get("/items/:id/requests", checkToken, requestController.getRequestsByItem);
