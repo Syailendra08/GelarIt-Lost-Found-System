@@ -62,12 +62,7 @@ export default function NavbarComp() {
             Browse Items
           </NavLink>
 
-          <NavLink
-            to="/support"
-            className="text-gray-500 transition hover:text-gray-800"
-          >
-            Support
-          </NavLink>
+          
         </div>
 
 
@@ -90,9 +85,9 @@ export default function NavbarComp() {
             >
               <Button
                 outline
-                className="border border-blue-700 text-blue-700 hover:bg-blue-50"
+                className="border border-blue-700 text-blue-700 "
               >
-                Log In
+                Login
               </Button>
             </Link>
           )}
@@ -109,35 +104,47 @@ export default function NavbarComp() {
       {isOpen && (
         <div className="mt-4 flex flex-col gap-4 border-t border-gray-200 pt-4 md:hidden">
 
-          <Link
+          <NavLink
             to="/"
-            className="font-medium text-blue-800"
             onClick={() => setIsOpen(false)}
+            className={({ isActive }) =>
+              `pb-1 border-b-2 transition ${isActive
+                ? "border-blue-700 text-blue-800"
+                : "border-transparent text-gray-500 hover:text-gray-800"
+              }`
+            }
           >
             Home
-          </Link>
+          </NavLink>
 
-          <Link
-            to="/browse"
-            className="font-medium text-gray-600 hover:text-black"
+          <NavLink
+            to="/dashboard"
             onClick={() => setIsOpen(false)}
+            className={({ isActive }) =>
+              `pb-1 border-b-2 transition ${isActive
+                ? "border-blue-700 text-blue-800"
+                : "border-transparent text-gray-500 hover:text-gray-800"
+              }`
+            }
+          >
+            Dashboard
+          </NavLink>
+
+          <NavLink
+            to="/gallery-page"
+            onClick={() => setIsOpen(false)}
+            className={({ isActive }) =>
+              `pb-1 border-b-2 transition ${isActive
+                ? "border-blue-700 text-blue-800"
+                : "border-transparent text-gray-500 hover:text-gray-800"
+              }`
+            }
           >
             Browse Items
-          </Link>
+          </NavLink>
 
-          <Link to="/how-it-works"
-            className="font-medium text-gray-600 hover:text-black"
-            onClick={() => setIsOpen(false)}
-          >
-            How It Works
-          </Link>
 
-          <Link to="/support"
-            className="font-medium text-gray-600 hover:text-black"
-            onClick={() => setIsOpen(false)}
-          >
-            Support
-          </Link>
+          
 
           <div className="mt-2 flex flex-col gap-3">
             <ButtonComp className="bg-yellow-400 text-black hover:bg-yellow-500">

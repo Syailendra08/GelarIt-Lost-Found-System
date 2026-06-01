@@ -421,7 +421,7 @@ export default function CreateItemAdmin() {
 
                         <button
                             type="button"
-                            onClick={() => navigate("/admin/items")}
+                            onClick={() => navigate("/admin/item-management")}
                             className="rounded-2xl border border-gray-300 bg-red-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-600"
                         >
                             Cancel

@@ -36,9 +36,15 @@ import TrashRequest from "../pages/Admin/Request/TrashRequest";
 
 
 export const router = createBrowserRouter([
-    { path: "/", element: <App /> },
-    { path: "/register", element: <RegisterPage /> },
-    { path: "/login", element: <LoginPage /> },
+    {
+        element: <UserTemplate />,
+        children: [
+            { path: "/", element: <App /> },
+            { path: "/register", element: <RegisterPage /> },
+            { path: "/login", element: <LoginPage /> },
+        ]
+    },
+
 
 
     {
@@ -51,9 +57,9 @@ export const router = createBrowserRouter([
                     { path: "/items/create", element: <CreateItem /> },
                     { path: "/items/edit/:id", element: <EditItem /> },
                     { path: "/gallery-page", element: <GalleryPage /> },
-                    {path: "/items/:id", element: <ItemDetailPage /> },
-                    {path: "/MyReport", element: <MyReport /> },
-                    {path: "/dashboard/my-claims", element: <MyClaim />}
+                    { path: "/items/:id", element: <ItemDetailPage /> },
+                    { path: "/MyReport", element: <MyReport /> },
+                    { path: "/dashboard/my-claims", element: <MyClaim /> }
 
                 ]
             }
@@ -68,29 +74,29 @@ export const router = createBrowserRouter([
                 element: <AdminTemplate />,
                 children: [
                     {
-                    path: "/admin",
-                    element: <Navigate to="/admin/dashboard" replace />
-                },
-                    {path: "/admin/dashboard", element: <AdminDashboard />},
-                    {path: "/admin/category-management", element: <CategoryManagement />},
-                    {path: "/admin/categories/create", element: < CreateCategory />},
-                    {path: "/admin/categories/edit/:id", element: <EditCategory />},
-                    {path: "/admin/categories/trash", element: <TrashCategory />},
-                    {path: "/admin/location-management", element: <LocationManagement />},
-                    {path: "/admin/locations/create", element: <CreateLocation />},
-                    {path: "/admin/locations/edit/:id", element: <EditLocation />},
-                    {path: "/admin/locations/trash", element: <TrashLocation />},
-                    {path: "/admin/users", element: <UserManagement />},
-                    {path: "/admin/users/create", element: <CreateUser />},
-                    {path: "/admin/users/edit/:id", element: <EditUser />},
-                    {path: "/admin/users/trash", element: <TrashUser />},
-                    {path: "/admin/item-management", element: <ItemManagement />},
-                    {path: "/admin/items/create", element: <CreateItemAdmin />},
-                    {path: "/admin/items/edit/:id", element: <EditItemAdmin/>},
-                    {path: "/admin/items/trash", element: <TrashItem />},
-                    {path: "/admin/request-management", element: <RequestManagement />},
-                    {path: "/admin/requests/trash", element: <TrashRequest />},
-                    
+                        path: "/admin",
+                        element: <Navigate to="/admin/dashboard" replace />
+                    },
+                    { path: "/admin/dashboard", element: <AdminDashboard /> },
+                    { path: "/admin/category-management", element: <CategoryManagement /> },
+                    { path: "/admin/categories/create", element: < CreateCategory /> },
+                    { path: "/admin/categories/edit/:id", element: <EditCategory /> },
+                    { path: "/admin/categories/trash", element: <TrashCategory /> },
+                    { path: "/admin/location-management", element: <LocationManagement /> },
+                    { path: "/admin/locations/create", element: <CreateLocation /> },
+                    { path: "/admin/locations/edit/:id", element: <EditLocation /> },
+                    { path: "/admin/locations/trash", element: <TrashLocation /> },
+                    { path: "/admin/users", element: <UserManagement /> },
+                    { path: "/admin/users/create", element: <CreateUser /> },
+                    { path: "/admin/users/edit/:id", element: <EditUser /> },
+                    { path: "/admin/users/trash", element: <TrashUser /> },
+                    { path: "/admin/item-management", element: <ItemManagement /> },
+                    { path: "/admin/items/create", element: <CreateItemAdmin /> },
+                    { path: "/admin/items/edit/:id", element: <EditItemAdmin /> },
+                    { path: "/admin/items/trash", element: <TrashItem /> },
+                    { path: "/admin/request-management", element: <RequestManagement /> },
+                    { path: "/admin/requests/trash", element: <TrashRequest /> },
+
                 ]
             }
         ]
